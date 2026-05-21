@@ -1,0 +1,602 @@
+[
+  {
+    "index": 0,
+    "file": "file_0---6ede7c4f-b27a-455f-be1a-201f3c0f35ba.jpg",
+    "public_id": "jus-wellness/gallery/jus-000",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404251/jus-wellness/gallery/jus-000.jpg",
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "index": 1,
+    "file": "file_0---94602c02-45e0-493d-bad4-76ef7f7c0ac7.jpg",
+    "public_id": "jus-wellness/gallery/jus-001",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404252/jus-wellness/gallery/jus-001.jpg",
+    "width": 1280,
+    "height": 872
+  },
+  {
+    "index": 2,
+    "file": "file_1---21678de1-1b2d-4c0b-a9aa-c3fa32ca4a58.jpg",
+    "public_id": "jus-wellness/gallery/jus-002",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404254/jus-wellness/gallery/jus-002.jpg",
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "index": 3,
+    "file": "file_1---79a2ad7f-2ecb-44c5-baca-7b22afb16514.jpg",
+    "public_id": "jus-wellness/gallery/jus-003",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404255/jus-wellness/gallery/jus-003.jpg",
+    "width": 1232,
+    "height": 786
+  },
+  {
+    "index": 4,
+    "file": "file_2---4dc82427-9394-49c6-aecc-16f1d9ac2e79.jpg",
+    "public_id": "jus-wellness/gallery/jus-004",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404256/jus-wellness/gallery/jus-004.jpg",
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "index": 5,
+    "file": "file_2---d8f1798d-c115-4d48-83bc-94a064cda0e6.jpg",
+    "public_id": "jus-wellness/gallery/jus-005",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404257/jus-wellness/gallery/jus-005.jpg",
+    "width": 800,
+    "height": 788
+  },
+  {
+    "index": 6,
+    "file": "file_3---338fa101-5500-446a-8375-3117ef37e336.jpg",
+    "public_id": "jus-wellness/gallery/jus-006",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404259/jus-wellness/gallery/jus-006.jpg",
+    "width": 800,
+    "height": 571
+  },
+  {
+    "index": 7,
+    "file": "file_3---b6530520-a878-4ed1-a440-17052478d814.jpg",
+    "public_id": "jus-wellness/gallery/jus-007",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404260/jus-wellness/gallery/jus-007.jpg",
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "index": 8,
+    "file": "file_4---de490e3c-93f8-4199-863a-68218a76165a.jpg",
+    "public_id": "jus-wellness/gallery/jus-008",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404261/jus-wellness/gallery/jus-008.jpg",
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "index": 9,
+    "file": "file_4---fbf0edcd-94f8-4624-b77b-78bc4da5deff.jpg",
+    "public_id": "jus-wellness/gallery/jus-009",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404262/jus-wellness/gallery/jus-009.jpg",
+    "width": 770,
+    "height": 800
+  },
+  {
+    "index": 10,
+    "file": "file_5---c21915c8-965c-404b-845c-a2d77f474197.jpg",
+    "public_id": "jus-wellness/gallery/jus-010",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404263/jus-wellness/gallery/jus-010.jpg",
+    "width": 800,
+    "height": 587
+  },
+  {
+    "index": 11,
+    "file": "file_5---ccf9e0a8-d7ea-4cc5-b1ec-a208109f3e9b.jpg",
+    "public_id": "jus-wellness/gallery/jus-011",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404264/jus-wellness/gallery/jus-011.jpg",
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "index": 12,
+    "file": "file_6---5345410d-debc-4727-973d-8ef1005bf3b7.jpg",
+    "public_id": "jus-wellness/gallery/jus-012",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404265/jus-wellness/gallery/jus-012.jpg",
+    "width": 594,
+    "height": 800
+  },
+  {
+    "index": 13,
+    "file": "file_7---24dbfb51-3962-4ccd-b3d3-dc2bea848ff9.jpg",
+    "public_id": "jus-wellness/gallery/jus-013",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404266/jus-wellness/gallery/jus-013.jpg",
+    "width": 1183,
+    "height": 665
+  },
+  {
+    "index": 14,
+    "file": "file_8---09a1aeb6-c30c-412e-883e-f85778ea68ca.jpg",
+    "public_id": "jus-wellness/gallery/jus-014",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404268/jus-wellness/gallery/jus-014.jpg",
+    "width": 375,
+    "height": 800
+  },
+  {
+    "index": 15,
+    "file": "file_9---048ca994-7716-47f0-8935-ce09eb22f70d.jpg",
+    "public_id": "jus-wellness/gallery/jus-015",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404269/jus-wellness/gallery/jus-015.jpg",
+    "width": 590,
+    "height": 1280
+  },
+  {
+    "index": 16,
+    "file": "file_10---8e5eaf50-447b-4697-a443-b795b14c4079.jpg",
+    "public_id": "jus-wellness/gallery/jus-016",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404270/jus-wellness/gallery/jus-016.jpg",
+    "width": 590,
+    "height": 1280
+  },
+  {
+    "index": 17,
+    "file": "file_11---c1589b67-218c-4bc1-8a7d-b28e2f0884ed.jpg",
+    "public_id": "jus-wellness/gallery/jus-017",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404271/jus-wellness/gallery/jus-017.jpg",
+    "width": 590,
+    "height": 1280
+  },
+  {
+    "index": 18,
+    "file": "file_12---de2b2caf-1624-4e69-8163-bb79cc50b492.jpg",
+    "public_id": "jus-wellness/gallery/jus-018",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404272/jus-wellness/gallery/jus-018.jpg",
+    "width": 590,
+    "height": 1280
+  },
+  {
+    "index": 19,
+    "file": "file_13---ddca67d1-9434-47a4-9ef4-c2336c66f663.jpg",
+    "public_id": "jus-wellness/gallery/jus-019",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404273/jus-wellness/gallery/jus-019.jpg",
+    "width": 1280,
+    "height": 700
+  },
+  {
+    "index": 20,
+    "file": "file_14---ff43a83e-b3c6-41b4-90ed-9949f90c0658.jpg",
+    "public_id": "jus-wellness/gallery/jus-020",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404274/jus-wellness/gallery/jus-020.jpg",
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "index": 21,
+    "file": "file_15---b44e748b-4d01-4bba-af12-496ac2bec13e.jpg",
+    "public_id": "jus-wellness/gallery/jus-021",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404275/jus-wellness/gallery/jus-021.jpg",
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "index": 22,
+    "file": "file_16---01dceb23-14e4-4ff7-b964-a80f21983b7c.jpg",
+    "public_id": "jus-wellness/gallery/jus-022",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404277/jus-wellness/gallery/jus-022.jpg",
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "index": 23,
+    "file": "file_17---92672aa0-6c65-4ce9-8a12-ca107e609259.jpg",
+    "public_id": "jus-wellness/gallery/jus-023",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404278/jus-wellness/gallery/jus-023.jpg",
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "index": 24,
+    "file": "file_18---d66eff11-7e27-4a77-8389-565550f0734b.jpg",
+    "public_id": "jus-wellness/gallery/jus-024",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404279/jus-wellness/gallery/jus-024.jpg",
+    "width": 800,
+    "height": 487
+  },
+  {
+    "index": 25,
+    "file": "file_19---8d1aa36a-6b08-425d-af1d-00ebaca294c8.jpg",
+    "public_id": "jus-wellness/gallery/jus-025",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404280/jus-wellness/gallery/jus-025.jpg",
+    "width": 627,
+    "height": 800
+  },
+  {
+    "index": 26,
+    "file": "file_20---fbf967aa-58e9-4c34-aa28-92e5930dc5f0.jpg",
+    "public_id": "jus-wellness/gallery/jus-026",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404281/jus-wellness/gallery/jus-026.jpg",
+    "width": 1280,
+    "height": 962
+  },
+  {
+    "index": 27,
+    "file": "file_22---d6ee9d70-81ca-4318-8e90-4249192ef34e.jpg",
+    "public_id": "jus-wellness/gallery/jus-027",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404283/jus-wellness/gallery/jus-027.jpg",
+    "width": 1280,
+    "height": 951
+  },
+  {
+    "index": 28,
+    "file": "file_23---7aac8a8e-db04-4662-8c10-6f53e1b35f2f.jpg",
+    "public_id": "jus-wellness/gallery/jus-028",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404284/jus-wellness/gallery/jus-028.jpg",
+    "width": 1280,
+    "height": 914
+  },
+  {
+    "index": 29,
+    "file": "file_24---4b82689f-6110-443b-84be-210c32a5f751.jpg",
+    "public_id": "jus-wellness/gallery/jus-029",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404285/jus-wellness/gallery/jus-029.jpg",
+    "width": 590,
+    "height": 1280
+  },
+  {
+    "index": 30,
+    "file": "file_25---ccb7dbec-8e37-4381-97bd-66f032e76f25.jpg",
+    "public_id": "jus-wellness/gallery/jus-030",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404286/jus-wellness/gallery/jus-030.jpg",
+    "width": 590,
+    "height": 1280
+  },
+  {
+    "index": 31,
+    "file": "file_26---ab2a4510-f2d8-4286-846c-c14da7dc4179.jpg",
+    "public_id": "jus-wellness/gallery/jus-031",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404287/jus-wellness/gallery/jus-031.jpg",
+    "width": 590,
+    "height": 1280
+  },
+  {
+    "index": 32,
+    "file": "file_27---81ff59c0-4b0d-4262-b6e3-2ba16c415549.jpg",
+    "public_id": "jus-wellness/gallery/jus-032",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404288/jus-wellness/gallery/jus-032.jpg",
+    "width": 590,
+    "height": 1280
+  },
+  {
+    "index": 33,
+    "file": "file_28---38eaab03-eef8-4bd7-b5fb-387636665dbd.jpg",
+    "public_id": "jus-wellness/gallery/jus-033",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404290/jus-wellness/gallery/jus-033.jpg",
+    "width": 590,
+    "height": 1280
+  },
+  {
+    "index": 34,
+    "file": "file_29---e14824f4-1c5f-4d98-8dc2-6afee1b7a8be.jpg",
+    "public_id": "jus-wellness/gallery/jus-034",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404291/jus-wellness/gallery/jus-034.jpg",
+    "width": 590,
+    "height": 1280
+  },
+  {
+    "index": 35,
+    "file": "file_30---10321e93-4217-4ed2-a114-239c16f71abe.jpg",
+    "public_id": "jus-wellness/gallery/jus-035",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404292/jus-wellness/gallery/jus-035.jpg",
+    "width": 590,
+    "height": 1280
+  },
+  {
+    "index": 36,
+    "file": "file_31---30d523cb-f6e1-463e-9237-f02b6f02a65d.jpg",
+    "public_id": "jus-wellness/gallery/jus-036",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404293/jus-wellness/gallery/jus-036.jpg",
+    "width": 590,
+    "height": 1280
+  },
+  {
+    "index": 37,
+    "file": "file_32---b25bb10e-c15b-4f60-a224-1d40a5667c0d.jpg",
+    "public_id": "jus-wellness/gallery/jus-037",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404294/jus-wellness/gallery/jus-037.jpg",
+    "width": 590,
+    "height": 1280
+  },
+  {
+    "index": 38,
+    "file": "file_33---535b5712-e7ee-4d7c-9056-5509e55e11e9.jpg",
+    "public_id": "jus-wellness/gallery/jus-038",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404296/jus-wellness/gallery/jus-038.jpg",
+    "width": 1067,
+    "height": 638
+  },
+  {
+    "index": 39,
+    "file": "file_34---fea2ab4a-278d-4c58-855b-f4156f9da399.jpg",
+    "public_id": "jus-wellness/gallery/jus-039",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404297/jus-wellness/gallery/jus-039.jpg",
+    "width": 1160,
+    "height": 774
+  },
+  {
+    "index": 40,
+    "file": "file_35---a0c20cc4-da56-4230-a1eb-74e24521aedf.jpg",
+    "public_id": "jus-wellness/gallery/jus-040",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404298/jus-wellness/gallery/jus-040.jpg",
+    "width": 607,
+    "height": 1080
+  },
+  {
+    "index": 41,
+    "file": "file_36---172fecaa-f0c7-4335-803a-5db4bba2f9b4.jpg",
+    "public_id": "jus-wellness/gallery/jus-041",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404300/jus-wellness/gallery/jus-041.jpg",
+    "width": 607,
+    "height": 1080
+  },
+  {
+    "index": 42,
+    "file": "file_37---12cff71a-0ba6-4de3-ad4e-eb23879d7906.jpg",
+    "public_id": "jus-wellness/gallery/jus-042",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404301/jus-wellness/gallery/jus-042.jpg",
+    "width": 607,
+    "height": 1080
+  },
+  {
+    "index": 43,
+    "file": "file_38---761f6fca-a6f6-4456-a891-ca4428fcea05.jpg",
+    "public_id": "jus-wellness/gallery/jus-043",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404302/jus-wellness/gallery/jus-043.jpg",
+    "width": 442,
+    "height": 185
+  },
+  {
+    "index": 44,
+    "file": "file_39---64f5b917-abd0-442a-ab9d-f30c285e299e.jpg",
+    "public_id": "jus-wellness/gallery/jus-044",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404303/jus-wellness/gallery/jus-044.jpg",
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "index": 45,
+    "file": "file_40---780d5124-ce2e-42c2-94f3-0470df7ad231.jpg",
+    "public_id": "jus-wellness/gallery/jus-045",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404304/jus-wellness/gallery/jus-045.jpg",
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "index": 46,
+    "file": "file_41---f65eec7f-5726-4425-90c5-c2f2be16c919.jpg",
+    "public_id": "jus-wellness/gallery/jus-046",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404305/jus-wellness/gallery/jus-046.jpg",
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "index": 47,
+    "file": "file_42---96146483-b8da-4fec-a2a1-055f4af972eb.jpg",
+    "public_id": "jus-wellness/gallery/jus-047",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404307/jus-wellness/gallery/jus-047.jpg",
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "index": 48,
+    "file": "file_43---f723f35c-75bc-4cc6-9014-c6b2e68b43ae.jpg",
+    "public_id": "jus-wellness/gallery/jus-048",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404308/jus-wellness/gallery/jus-048.jpg",
+    "width": 1280,
+    "height": 770
+  },
+  {
+    "index": 49,
+    "file": "file_44---03cc054d-eade-4535-b874-eeebc7760abc.jpg",
+    "public_id": "jus-wellness/gallery/jus-049",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404309/jus-wellness/gallery/jus-049.jpg",
+    "width": 551,
+    "height": 661
+  },
+  {
+    "index": 50,
+    "file": "file_46---0992dbe9-3d9b-457d-bd2e-de078c9a87e9.jpg",
+    "public_id": "jus-wellness/gallery/jus-050",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404310/jus-wellness/gallery/jus-050.jpg",
+    "width": 1280,
+    "height": 763
+  },
+  {
+    "index": 51,
+    "file": "file_47---044b4a8b-69f8-42b6-9350-6f6aa048ac27.jpg",
+    "public_id": "jus-wellness/gallery/jus-051",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404311/jus-wellness/gallery/jus-051.jpg",
+    "width": 1280,
+    "height": 800
+  },
+  {
+    "index": 52,
+    "file": "file_48---30978711-791d-4b5c-8986-0348f870bc8f.jpg",
+    "public_id": "jus-wellness/gallery/jus-052",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404312/jus-wellness/gallery/jus-052.jpg",
+    "width": 1280,
+    "height": 770
+  },
+  {
+    "index": 53,
+    "file": "file_49---4963998c-a971-4d2c-a335-c6ab36912862.jpg",
+    "public_id": "jus-wellness/gallery/jus-053",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404313/jus-wellness/gallery/jus-053.jpg",
+    "width": 1157,
+    "height": 506
+  },
+  {
+    "index": 54,
+    "file": "file_49---bfff3dfa-9c8a-48c7-bc18-5ce3a193690a.jpg",
+    "public_id": "jus-wellness/gallery/jus-054",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404315/jus-wellness/gallery/jus-054.jpg",
+    "width": 1157,
+    "height": 506
+  },
+  {
+    "index": 55,
+    "file": "file_50---c7e11603-ac4b-453f-9bad-983bc66ba60a.jpg",
+    "public_id": "jus-wellness/gallery/jus-055",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404316/jus-wellness/gallery/jus-055.jpg",
+    "width": 1280,
+    "height": 800
+  },
+  {
+    "index": 56,
+    "file": "file_51---415737a6-2831-4bdc-9bf9-adc59c2b6f76.jpg",
+    "public_id": "jus-wellness/gallery/jus-056",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404317/jus-wellness/gallery/jus-056.jpg",
+    "width": 1280,
+    "height": 800
+  },
+  {
+    "index": 57,
+    "file": "file_52---60d334aa-08d0-44bf-af87-0b1b8d227471.jpg",
+    "public_id": "jus-wellness/gallery/jus-057",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404318/jus-wellness/gallery/jus-057.jpg",
+    "width": 1280,
+    "height": 800
+  },
+  {
+    "index": 58,
+    "file": "file_53---450e5b7e-a901-4d62-a914-46293b0dee88.jpg",
+    "public_id": "jus-wellness/gallery/jus-058",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404319/jus-wellness/gallery/jus-058.jpg",
+    "width": 1280,
+    "height": 800
+  },
+  {
+    "index": 59,
+    "file": "file_54---e503de8e-f554-4996-af09-af5cbc440207.jpg",
+    "public_id": "jus-wellness/gallery/jus-059",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404320/jus-wellness/gallery/jus-059.jpg",
+    "width": 1280,
+    "height": 800
+  },
+  {
+    "index": 60,
+    "file": "file_61---69e5716b-6be2-481b-8a91-642783be6075.jpg",
+    "public_id": "jus-wellness/gallery/jus-060",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404321/jus-wellness/gallery/jus-060.jpg",
+    "width": 1280,
+    "height": 766
+  },
+  {
+    "index": 61,
+    "file": "file_62---90341b33-f0dc-4601-9e7a-9ba56308faa7.jpg",
+    "public_id": "jus-wellness/gallery/jus-061",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404322/jus-wellness/gallery/jus-061.jpg",
+    "width": 1280,
+    "height": 766
+  },
+  {
+    "index": 62,
+    "file": "file_63---722e9d2f-8d89-4e72-9f6c-aa1da5c8d9b3.jpg",
+    "public_id": "jus-wellness/gallery/jus-062",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404323/jus-wellness/gallery/jus-062.jpg",
+    "width": 590,
+    "height": 1280
+  },
+  {
+    "index": 63,
+    "file": "file_64---9dcdc3c6-d364-418d-9a02-c1766a1d0613.jpg",
+    "public_id": "jus-wellness/gallery/jus-063",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404325/jus-wellness/gallery/jus-063.jpg",
+    "width": 496,
+    "height": 651
+  },
+  {
+    "index": 64,
+    "file": "file_65---4dae38e6-8d6c-4d07-a1f0-11f1d82e6c4a.jpg",
+    "public_id": "jus-wellness/gallery/jus-064",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404326/jus-wellness/gallery/jus-064.jpg",
+    "width": 1280,
+    "height": 807
+  },
+  {
+    "index": 65,
+    "file": "file_66---7cfa6192-32f7-4afb-93d2-c0deb4fb9e38.jpg",
+    "public_id": "jus-wellness/gallery/jus-065",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404327/jus-wellness/gallery/jus-065.jpg",
+    "width": 1280,
+    "height": 800
+  },
+  {
+    "index": 66,
+    "file": "file_67---6c53e514-cefa-4b8d-864d-9be4e7adb738.jpg",
+    "public_id": "jus-wellness/gallery/jus-066",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404328/jus-wellness/gallery/jus-066.jpg",
+    "width": 1280,
+    "height": 800
+  },
+  {
+    "index": 67,
+    "file": "file_68---baa4d82a-6a22-4f13-b5ba-8c11c8d291e1.jpg",
+    "public_id": "jus-wellness/gallery/jus-067",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404329/jus-wellness/gallery/jus-067.jpg",
+    "width": 1280,
+    "height": 800
+  },
+  {
+    "index": 68,
+    "file": "file_69---bae01feb-d850-4465-95db-f3cb15d622f3.jpg",
+    "public_id": "jus-wellness/gallery/jus-068",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404330/jus-wellness/gallery/jus-068.jpg",
+    "width": 1280,
+    "height": 763
+  },
+  {
+    "index": 69,
+    "file": "file_70---ae8afafb-511a-47b3-a75c-cda8fe6e9e74.jpg",
+    "public_id": "jus-wellness/gallery/jus-069",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404331/jus-wellness/gallery/jus-069.jpg",
+    "width": 590,
+    "height": 1280
+  },
+  {
+    "index": 70,
+    "file": "file_71---e9151804-04f2-49a6-93e7-4965dd3a1f7c.jpg",
+    "public_id": "jus-wellness/gallery/jus-070",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404333/jus-wellness/gallery/jus-070.jpg",
+    "width": 590,
+    "height": 1280
+  },
+  {
+    "index": 71,
+    "file": "file_73---e6333353-3c7e-45ea-987c-0b79bdd97c39.jpg",
+    "public_id": "jus-wellness/gallery/jus-071",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404334/jus-wellness/gallery/jus-071.jpg",
+    "width": 590,
+    "height": 1280
+  },
+  {
+    "index": 72,
+    "file": "file_74---39a20269-507f-4c43-9c23-79bc1d894575.jpg",
+    "public_id": "jus-wellness/gallery/jus-072",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404335/jus-wellness/gallery/jus-072.jpg",
+    "width": 1280,
+    "height": 817
+  },
+  {
+    "index": 73,
+    "file": "file_75---81437d32-a937-41b0-8cd2-a47ab40e3c7e.jpg",
+    "public_id": "jus-wellness/gallery/jus-073",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404336/jus-wellness/gallery/jus-073.jpg",
+    "width": 1280,
+    "height": 800
+  },
+  {
+    "index": 74,
+    "file": "file_76---2193f06c-faea-4a14-8704-32ac25f63ccd.jpg",
+    "public_id": "jus-wellness/gallery/jus-074",
+    "url": "https://res.cloudinary.com/dqcejwbxk/image/upload/v1779404337/jus-wellness/gallery/jus-074.jpg",
+    "width": 761,
+    "height": 786
+  }
+]
