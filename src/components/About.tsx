@@ -4,13 +4,13 @@ export default function About() {
   return (
     <section id="about" className="relative py-24 sm:py-32 bg-white overflow-hidden">
       {/* Background accent */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-brand-cream/30 rounded-l-[80px] hidden lg:block" />
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-brand-sand/60 rounded-l-[80px] hidden lg:block" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           {/* Left: Visual */}
           <div className="relative">
-            <div className="aspect-[4/5] max-w-md mx-auto rounded-[2rem] bg-gradient-to-br from-brand-green-dark to-brand-green overflow-hidden relative noise">
+            <div className="aspect-[4/5] max-w-md mx-auto rounded-[2rem] bg-gradient-to-br from-brand-charcoal to-brand-green overflow-hidden relative noise">
               <div className="relative z-10 flex flex-col items-center justify-center h-full text-center p-10 space-y-6">
                 <p className="text-7xl sm:text-8xl">🌿</p>
                 <div className="space-y-2">

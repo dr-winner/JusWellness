@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCart } from "@/lib/cart-context";
 
 const navLinks = [
   { href: "#products", label: "Menu" },
@@ -12,7 +13,9 @@ const navLinks = [
   { href: "#contact", label: "Contact" },
 ];
 
-export default function Navbar({ cartCount = 0 }: { cartCount?: number }) {
+export default function Navbar({ cartCount: cartCountProp }: { cartCount?: number }) {
+  const cartCtx = useCart();
+  const cartCount = cartCountProp ?? cartCtx.cartCount;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 

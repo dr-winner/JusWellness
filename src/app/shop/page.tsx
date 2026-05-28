@@ -19,7 +19,8 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { Product, CartItem } from "@/lib/types";
+import { Product } from "@/lib/types";
+import { useCart } from "@/lib/cart-context";
 
 const categoryEmoji: Record<string, string> = {
   juice: "🧃",
@@ -36,9 +37,9 @@ const bgAccents: Record<string, string> = {
 };
 
 export default function ShopPage() {
+  const { cart, addToCart: ctxAddToCart, updateQuantity, cartCount, cartTotal, deliveryFee, orderTotal } = useCart();
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [cart, setCart] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [selectedSizes, setSelectedSizes] = useState<Record<string, number>>({});
   const [checkoutStep, setCheckoutStep] = useState<"cart" | "details">("cart");
@@ -69,41 +70,8 @@ export default function ShopPage() {
     const sizeIndex = getSelectedSize(product.id);
     setAddedAnimation(true);
     setTimeout(() => setAddedAnimation(false), 1500);
-    setCart((prev) => {
-      const existing = prev.find(
-        (item) => item.product.id === product.id && item.sizeIndex === sizeIndex
-      );
-      if (existing) {
-        return prev.map((item) =>
-          item.product.id === product.id && item.sizeIndex === sizeIndex
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-      return [...prev, { product, sizeIndex, quantity: 1 }];
-    });
+    ctxAddToCart(product, sizeIndex);
   };
-
-  const updateQuantity = (productId: string, sizeIndex: number, delta: number) => {
-    setCart((prev) =>
-      prev
-        .map((item) =>
-          item.product.id === productId && item.sizeIndex === sizeIndex
-            ? { ...item, quantity: item.quantity + delta }
-            : item
-        )
-        .filter((item) => item.quantity > 0)
-    );
-  };
-
-  const cartTotal = cart.reduce(
-    (sum, item) => sum + item.product.sizes[item.sizeIndex].price * item.quantity,
-    0
-  );
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-  const deliveryFee = cartTotal >= 100 ? 0 : 10;
-  const orderTotal = cartTotal + deliveryFee;
 
   const whatsappOrderMessage = () => {
     const items = cart
@@ -127,7 +95,7 @@ export default function ShopPage() {
       `━━━━━━━━━━━━━━`,
       `*TOTAL: ${formatCurrency(orderTotal)}*`,
       ``,
-      `Please confirm availability and delivery time 🙏`,
+      `Hi! I'd like to place this order. Please send me payment details 🙏`,
     ];
     return lines.join("\n");
   };
@@ -145,7 +113,7 @@ export default function ShopPage() {
     <>
       <Navbar cartCount={cartCount} />
 
-      <main className="pt-24 pb-20 min-h-screen bg-gray-50/50">
+      <main className="pt-24 pb-20 min-h-screen bg-brand-sand/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center space-y-4 mb-8 pt-4">
@@ -188,17 +156,17 @@ export default function ShopPage() {
                 bgAccents[product.category]
               )}
             >
-              <div className="grid md:grid-cols-2 gap-6 items-center min-h-[520px]">
+              <div className="grid md:grid-cols-2 gap-6 items-center min-h-[580px]">
                 {/* Left — Visual */}
                 <div className="relative flex items-center justify-center p-10 md:p-14">
                   <div className="relative">
-                    <div className="w-44 h-44 sm:w-56 sm:h-56 rounded-3xl overflow-hidden bg-white/70 backdrop-blur-sm flex items-center justify-center shadow-2xl shadow-black/5">
+                    <div className="w-56 h-56 sm:w-72 sm:h-72 rounded-3xl overflow-hidden bg-white/70 backdrop-blur-sm flex items-center justify-center shadow-2xl shadow-black/5">
                       <Image
                         src={product.image}
                         alt={product.name}
-                        width={300}
-                        height={300}
-                        className="w-full h-full object-cover"
+                        width={400}
+                        height={400}
+                        className="w-full h-full object-contain p-2"
                         key={product.id}
                       />
                     </div>
@@ -370,6 +338,7 @@ export default function ShopPage() {
               <div ref={listRef} className="flex-1 overflow-y-auto">
                 {filtered.map((p, i) => {
                   const itemInCart = cart.some((c) => c.product.id === p.id);
+                  const pSizeIdx = getSelectedSize(p.id);
                   return (
                     <button
                       key={p.id}
@@ -382,7 +351,7 @@ export default function ShopPage() {
                       )}
                     >
                       <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-gray-100">
-                        <Image src={p.image} alt={p.name} width={40} height={40} className="w-full h-full object-cover" />
+                        <Image src={p.image} alt={p.name} width={40} height={40} className="w-full h-full object-contain" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p
@@ -394,12 +363,14 @@ export default function ShopPage() {
                           {p.name}
                         </p>
                         <p className="text-[11px] text-gray-400 truncate">
-                          {p.ingredients.slice(0, 3).join(" · ")}
+                          {p.sizes.length > 1
+                            ? p.sizes.map((s) => s.label).join(" · ")
+                            : p.ingredients.slice(0, 3).join(" · ")}
                         </p>
                       </div>
                       <div className="text-right shrink-0">
                         <p className="text-sm font-bold text-brand-green">
-                          {formatCurrency(p.sizes[0].price)}
+                          {formatCurrency(p.sizes[pSizeIdx].price)}
                         </p>
                         {itemInCart && (
                           <span className="text-[9px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">
@@ -454,7 +425,7 @@ export default function ShopPage() {
               {cart.map((item) => (
                 <div key={`${item.product.id}-${item.sizeIndex}`} className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
                   <div className="w-12 h-12 bg-white rounded-xl overflow-hidden shrink-0 border border-gray-100">
-                    <Image src={item.product.image} alt={item.product.name} width={48} height={48} className="w-full h-full object-cover" />
+                    <Image src={item.product.image} alt={item.product.name} width={48} height={48} className="w-full h-full object-contain p-0.5" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm text-gray-900 truncate">{item.product.name}</p>
@@ -536,6 +507,9 @@ export default function ShopPage() {
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green outline-none text-sm"
                     />
                   </div>
+                  <p className="text-xs text-gray-500 bg-gray-50 px-3 py-2 rounded-lg">
+                    💳 After sending your order, we’ll reply on WhatsApp with payment details (MoMo / bank transfer). Your order is confirmed once payment is received.
+                  </p>
                   <a
                     href={customerName.trim() && customerPhone.trim() ? `https://wa.me/233551792710?text=${encodeURIComponent(whatsappOrderMessage())}` : "#"}
                     target="_blank"
@@ -549,7 +523,7 @@ export default function ShopPage() {
                     className="flex items-center justify-center gap-2 w-full py-4 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg shadow-green-500/20"
                   >
                     <MessageCircle className="w-5 h-5" />
-                    Send Order via WhatsApp
+                    Place Order via WhatsApp
                   </a>
                   <button
                     onClick={() => setCheckoutStep("cart")}

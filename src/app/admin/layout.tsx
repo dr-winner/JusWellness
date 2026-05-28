@@ -9,6 +9,7 @@ import {
   ShoppingCart,
   Factory,
   BarChart3,
+  DollarSign,
   Menu,
   X,
   LogOut,
@@ -16,9 +17,10 @@ import {
 
 const sidebarLinks = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
+  { href: "/admin/sales", label: "Sales", icon: DollarSign },
+  { href: "/admin/production", label: "Production & Waste", icon: Factory },
   { href: "/admin/inventory", label: "Inventory", icon: Package },
-  { href: "/admin/production", label: "Production", icon: Factory },
+  { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
 ];
 

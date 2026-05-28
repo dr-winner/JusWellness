@@ -1,6 +1,26 @@
 export type Database = {
   public: {
     Tables: {
+      sales: {
+        Row: {
+          id: string;
+          sale_number: string;
+          product_name: string;
+          bottle_size: string;
+          units_sold: number;
+          unit_price: number;
+          total_price: number;
+          customer_name: string | null;
+          customer_phone: string | null;
+          channel: "walkin" | "whatsapp" | "online" | "wholesale";
+          payment_method: "cash" | "momo" | "transfer" | "paystack" | null;
+          notes: string | null;
+          sold_at: string;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["sales"]["Row"], "id" | "sale_number" | "created_at">;
+        Update: Partial<Database["public"]["Tables"]["sales"]["Insert"]>;
+      };
       products: {
         Row: {
           id: string;
@@ -95,6 +115,8 @@ export type Database = {
           cost_per_unit: number;
           reorder_level: number;
           supplier: string | null;
+          condition: "good" | "fair" | "poor" | "expired";
+          notes: string | null;
           last_restocked: string | null;
           created_at: string;
           updated_at: string;
@@ -121,6 +143,9 @@ export type Database = {
           product_id: string | null;
           product_name: string;
           quantity: number;
+          bottle_size: string | null;
+          units_wasted: number;
+          waste_reason: string | null;
           status: "in-progress" | "completed" | "discarded";
           notes: string | null;
           produced_at: string;

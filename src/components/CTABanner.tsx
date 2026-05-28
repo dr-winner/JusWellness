@@ -8,8 +8,8 @@ export default function CTABanner() {
     <section className="relative py-24 sm:py-32 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-brand-green via-brand-green-light to-brand-green-dark" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_80%,rgba(212,160,23,0.1),transparent_40%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.08),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_80%,rgba(232,168,56,0.1),transparent_40%)]" />
 
       {/* Floating elements */}
       <div className="absolute top-10 left-10 text-6xl opacity-20 animate-float">🧃</div>
@@ -32,7 +32,7 @@ export default function CTABanner() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/shop"
-            className="group inline-flex items-center justify-center gap-3 px-10 py-4.5 bg-white text-brand-green-dark font-bold text-lg rounded-full hover:bg-brand-cream transition-all duration-300 hover:scale-[1.03] shadow-2xl shadow-black/20"
+            className="group inline-flex items-center justify-center gap-3 px-10 py-4.5 bg-brand-orange text-white font-bold text-lg rounded-full hover:bg-brand-gold transition-all duration-300 hover:scale-[1.03] shadow-2xl shadow-brand-orange/30"
           >
             Shop Now
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

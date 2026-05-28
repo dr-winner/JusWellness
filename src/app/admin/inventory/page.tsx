@@ -11,6 +11,7 @@ import {
   Package,
   Loader2,
   RefreshCw,
+  Edit3,
 } from "lucide-react";
 
 const categoryColors: Record<string, string> = {
@@ -21,11 +22,21 @@ const categoryColors: Record<string, string> = {
   other: "bg-gray-50 text-gray-700",
 };
 
+const conditionColors: Record<string, string> = {
+  good: "bg-green-100 text-green-700",
+  fair: "bg-yellow-100 text-yellow-700",
+  poor: "bg-orange-100 text-orange-700",
+  expired: "bg-red-100 text-red-700",
+};
+
 export default function InventoryPage() {
   const [inventory, setInventory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [restockItem, setRestockItem] = useState<any | null>(null);
+  const [restockQty, setRestockQty] = useState("");
+  const [restockSaving, setRestockSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     category: "fruit",
@@ -34,6 +45,8 @@ export default function InventoryPage() {
     cost_per_unit: "",
     reorder_level: "",
     supplier: "",
+    condition: "good",
+    notes: "",
   });
   const [saving, setSaving] = useState(false);
 
@@ -52,6 +65,25 @@ export default function InventoryPage() {
     fetchInventory();
   }, []);
 
+  const handleRestock = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!restockItem) return;
+    setRestockSaving(true);
+    const newQty = restockItem.quantity + Number(restockQty);
+    const { error } = await supabase
+      .from("inventory")
+      .update({ quantity: newQty, condition: "good" })
+      .eq("id", restockItem.id);
+    setRestockSaving(false);
+    if (error) {
+      alert("Failed: " + error.message);
+      return;
+    }
+    setRestockItem(null);
+    setRestockQty("");
+    fetchInventory();
+  };
+
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -63,6 +95,8 @@ export default function InventoryPage() {
       cost_per_unit: Number(formData.cost_per_unit),
       reorder_level: Number(formData.reorder_level),
       supplier: formData.supplier || null,
+      condition: formData.condition,
+      notes: formData.notes || null,
     });
     setSaving(false);
     if (error) {
@@ -70,7 +104,7 @@ export default function InventoryPage() {
       return;
     }
     setShowAddModal(false);
-    setFormData({ name: "", category: "fruit", unit: "kg", quantity: "", cost_per_unit: "", reorder_level: "", supplier: "" });
+    setFormData({ name: "", category: "fruit", unit: "kg", quantity: "", cost_per_unit: "", reorder_level: "", supplier: "", condition: "good", notes: "" });
     fetchInventory();
   };
 
@@ -167,6 +201,7 @@ export default function InventoryPage() {
                   <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3">Stock</th>
                   <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3 hidden sm:table-cell">Cost/Unit</th>
                   <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3 hidden md:table-cell">Supplier</th>
+                  <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3 hidden lg:table-cell">Condition</th>
                   <th className="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3">Status</th>
                 </tr>
               </thead>
@@ -175,7 +210,10 @@ export default function InventoryPage() {
                   const isLow = item.quantity <= item.reorder_level;
                   return (
                     <tr key={item.id} className={cn("border-b border-gray-50 hover:bg-gray-50/50", isLow && "bg-red-50/30")}>
-                      <td className="px-6 py-4"><span className="text-sm font-semibold text-gray-900">{item.name}</span></td>
+                      <td className="px-6 py-4">
+                        <span className="text-sm font-semibold text-gray-900">{item.name}</span>
+                        {item.notes && <p className="text-xs text-gray-400 truncate max-w-[150px]">{item.notes}</p>}
+                      </td>
                       <td className="px-6 py-4">
                         <span className={`inline-block px-2.5 py-1 text-xs font-semibold rounded-full capitalize ${categoryColors[item.category] || "bg-gray-50 text-gray-600"}`}>
                           {item.category}
@@ -192,13 +230,26 @@ export default function InventoryPage() {
                         {formatCurrency(item.cost_per_unit)}/{item.unit}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600 hidden md:table-cell">{item.supplier || "—"}</td>
+                      <td className="px-6 py-4 hidden lg:table-cell">
+                        <span className={`inline-block px-2.5 py-1 text-xs font-semibold rounded-full capitalize ${conditionColors[item.condition] || "bg-gray-100 text-gray-600"}`}>
+                          {item.condition || "good"}
+                        </span>
+                      </td>
                       <td className="px-6 py-4">
                         {isLow ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
-                            <AlertTriangle className="w-3 h-3" />Low
-                          </span>
+                          <button
+                            onClick={() => { setRestockItem(item); setRestockQty(""); }}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-full hover:bg-red-200 transition-colors"
+                          >
+                            <AlertTriangle className="w-3 h-3" />Restock
+                          </button>
                         ) : (
-                          <span className="inline-block px-2.5 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">OK</span>
+                          <button
+                            onClick={() => { setRestockItem(item); setRestockQty(""); }}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full hover:bg-green-200 transition-colors"
+                          >
+                            <Edit3 className="w-3 h-3" />OK
+                          </button>
                         )}
                       </td>
                     </tr>
@@ -221,15 +272,26 @@ export default function InventoryPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Item Name</label>
                 <input type="text" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="e.g. Spinach" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green outline-none text-sm" />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                <select value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green outline-none text-sm bg-white">
-                  <option value="fruit">Fruit</option>
-                  <option value="vegetable">Vegetable</option>
-                  <option value="spice">Spice</option>
-                  <option value="packaging">Packaging</option>
-                  <option value="other">Other</option>
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                  <select value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green outline-none text-sm bg-white">
+                    <option value="fruit">Fruit</option>
+                    <option value="vegetable">Vegetable</option>
+                    <option value="spice">Spice</option>
+                    <option value="packaging">Packaging</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Condition</label>
+                  <select value={formData.condition} onChange={(e) => setFormData({ ...formData, condition: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green outline-none text-sm bg-white">
+                    <option value="good">Good</option>
+                    <option value="fair">Fair</option>
+                    <option value="poor">Poor</option>
+                    <option value="expired">Expired</option>
+                  </select>
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -239,13 +301,13 @@ export default function InventoryPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
                   <select value={formData.unit} onChange={(e) => setFormData({ ...formData, unit: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green outline-none text-sm bg-white">
-                    <option>kg</option><option>pcs</option><option>litres</option><option>bags</option>
+                    <option>kg</option><option>pcs</option><option>litres</option><option>bags</option><option>boxes</option>
                   </select>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Cost/Unit (GHS)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Price/Amount (GHS)</label>
                   <input type="number" required min="0" step="0.01" value={formData.cost_per_unit} onChange={(e) => setFormData({ ...formData, cost_per_unit: e.target.value })} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green outline-none text-sm" />
                 </div>
                 <div>
@@ -254,13 +316,43 @@ export default function InventoryPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Supplier</label>
-                <input type="text" value={formData.supplier} onChange={(e) => setFormData({ ...formData, supplier: e.target.value })} placeholder="e.g. Madina Market" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green outline-none text-sm" />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Supplier Details</label>
+                <input type="text" value={formData.supplier} onChange={(e) => setFormData({ ...formData, supplier: e.target.value })} placeholder="e.g. Madina Market — Kofi, 0551234567" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green outline-none text-sm" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                <textarea rows={2} value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} placeholder="Any notes about condition, delivery, etc..." className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green outline-none text-sm resize-none" />
               </div>
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 py-2.5 border border-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-50">Cancel</button>
                 <button type="submit" disabled={saving} className="flex-1 py-2.5 bg-brand-green text-white font-semibold rounded-xl hover:bg-brand-green-dark disabled:opacity-50">
                   {saving ? "Adding..." : "Add Item"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Restock Modal */}
+      {restockItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setRestockItem(null)} />
+          <div className="relative bg-white rounded-2xl p-8 w-full max-w-sm mx-4 shadow-2xl">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Restock {restockItem.name}</h2>
+            <p className="text-sm text-gray-500 mb-6">Current: <span className="font-bold text-gray-900">{restockItem.quantity} {restockItem.unit}</span> (reorder at {restockItem.reorder_level})</p>
+            <form onSubmit={handleRestock} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Quantity to Add ({restockItem.unit})</label>
+                <input type="number" required min="0.01" step="0.01" value={restockQty} onChange={(e) => setRestockQty(e.target.value)} placeholder={`e.g. 10`} autoFocus className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green outline-none text-sm" />
+                {restockQty && (
+                  <p className="text-xs text-brand-green font-semibold mt-1">New total: {(restockItem.quantity + Number(restockQty)).toFixed(1)} {restockItem.unit}</p>
+                )}
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="button" onClick={() => setRestockItem(null)} className="flex-1 py-2.5 border border-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-50">Cancel</button>
+                <button type="submit" disabled={restockSaving} className="flex-1 py-2.5 bg-brand-green text-white font-semibold rounded-xl hover:bg-brand-green-dark disabled:opacity-50">
+                  {restockSaving ? "Restocking..." : "Restock"}
                 </button>
               </div>
             </form>

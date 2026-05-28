@@ -18,12 +18,12 @@ const marqueeItems = [
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex flex-col overflow-hidden bg-brand-green-dark">
+    <section className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-brand-charcoal via-brand-green-dark to-brand-charcoal">
       {/* Gradient mesh background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_20%_50%,rgba(64,145,108,0.3),transparent_60%)]" />
-        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_80%_20%,rgba(212,160,23,0.15),transparent_50%)]" />
-        <div className="absolute bottom-0 left-1/2 w-full h-1/2 bg-[radial-gradient(ellipse_at_50%_100%,rgba(45,106,79,0.4),transparent_70%)]" />
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_20%_50%,rgba(91,171,128,0.2),transparent_60%)]" />
+        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_80%_20%,rgba(232,168,56,0.12),transparent_50%)]" />
+        <div className="absolute bottom-0 left-1/2 w-full h-1/2 bg-[radial-gradient(ellipse_at_50%_100%,rgba(58,125,92,0.3),transparent_70%)]" />
       </div>
 
       {/* Floating orbs */}
@@ -52,7 +52,7 @@ export default function Hero() {
               <br />
               <span className="text-white">Every Day —</span>
               <br />
-              <span className="text-gradient bg-gradient-to-r from-brand-gold via-brand-gold-light to-brand-gold bg-clip-text text-transparent">
+              <span className="text-gradient bg-gradient-to-r from-brand-gold via-brand-orange to-brand-gold bg-clip-text text-transparent">
                 Fresh Fresh.
               </span>
             </h1>
@@ -65,7 +65,7 @@ export default function Hero() {
             <div className="animate-fade-in-up opacity-0 delay-300 flex flex-col sm:flex-row gap-4">
               <Link
                 href="/shop"
-                className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-brand-green-dark font-bold text-lg rounded-full hover:bg-brand-cream transition-all duration-300 hover:scale-[1.03] shadow-2xl shadow-black/20"
+                className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-brand-orange text-white font-bold text-lg rounded-full hover:bg-brand-gold transition-all duration-300 hover:scale-[1.03] shadow-2xl shadow-brand-orange/30"
               >
                 Order Now
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -91,7 +91,7 @@ export default function Hero() {
                   {["🟤", "🟡", "🟠", "🔵"].map((_, i) => (
                     <div
                       key={i}
-                      className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-gold/40 to-brand-green/40 border-2 border-brand-green-dark flex items-center justify-center text-[10px]"
+                      className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-peach to-brand-sage border-2 border-brand-charcoal flex items-center justify-center text-[10px] font-bold text-brand-charcoal"
                     >
                       {["AK", "KM", "EO", "YB"][i]}
                     </div>
@@ -119,7 +119,7 @@ export default function Hero() {
               <div className="absolute inset-4 rounded-full border border-dashed border-white/8" />
 
               {/* Center content */}
-              <div className="absolute inset-12 rounded-full bg-gradient-to-br from-brand-green/30 to-brand-green-dark/60 glass-dark flex items-center justify-center">
+              <div className="absolute inset-12 rounded-full bg-gradient-to-br from-brand-green/40 to-brand-charcoal/70 glass-dark flex items-center justify-center">
                 <div className="text-center space-y-3">
                   <p className="text-6xl">🧃</p>
                   <div>

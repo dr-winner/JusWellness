@@ -5,10 +5,9 @@ import Image from "next/image";
 import { products } from "@/lib/products";
 import { formatCurrency } from "@/lib/utils";
 import { cn } from "@/lib/utils";
-import { ArrowRight, ArrowLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ShoppingBag, Check } from "lucide-react";
 import Link from "next/link";
-
-const featured = products.filter((p) => p.badge).slice(0, 8);
+import { useCart } from "@/lib/cart-context";
 
 const categoryEmoji: Record<string, string> = {
   juice: "🧃",
@@ -17,23 +16,30 @@ const categoryEmoji: Record<string, string> = {
   shot: "⚡",
 };
 
-const bgGradients: Record<string, string> = {
-  juice: "from-green-50 via-brand-cream/50 to-white",
-  coconut: "from-amber-50 via-orange-50/30 to-white",
-  mashke: "from-purple-50 via-pink-50/30 to-white",
-  shot: "from-yellow-50 via-brand-cream/50 to-white",
-};
-
 export default function FeaturedProducts() {
-  const [current, setCurrent] = useState(0);
-  const product = featured[current];
+  const { addToCart } = useCart();
+  const [selectedSizes, setSelectedSizes] = useState<Record<string, number>>({});
+  const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
 
-  const next = () => setCurrent((prev) => (prev + 1) % featured.length);
-  const prev = () =>
-    setCurrent((prev) => (prev - 1 + featured.length) % featured.length);
+  const getSize = (productId: string) => selectedSizes[productId] ?? 0;
+  const setSize = (productId: string, idx: number) =>
+    setSelectedSizes((prev) => ({ ...prev, [productId]: idx }));
+
+  const handleAdd = (product: typeof products[0]) => {
+    const sizeIdx = getSize(product.id);
+    addToCart(product, sizeIdx);
+    setAddedIds((prev) => new Set(prev).add(product.id));
+    setTimeout(() => {
+      setAddedIds((prev) => {
+        const next = new Set(prev);
+        next.delete(product.id);
+        return next;
+      });
+    }, 1200);
+  };
 
   return (
-    <section id="products" className="relative py-24 sm:py-32 bg-white overflow-hidden">
+    <section id="products" className="relative py-24 sm:py-32 bg-brand-sand overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-16">
@@ -51,159 +57,112 @@ export default function FeaturedProducts() {
             href="/shop"
             className="group inline-flex items-center gap-2 text-brand-green font-semibold hover:gap-3 transition-all"
           >
-            View all 23 products
+            View all {products.length} products
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 
-        {/* Spotlight product */}
-        <div
-          className={cn(
-            "relative rounded-[2.5rem] overflow-hidden transition-all duration-700 bg-gradient-to-br",
-            bgGradients[product.category]
-          )}
-        >
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-0 items-center min-h-[480px]">
-            {/* Left — Visual */}
-            <div className="relative flex items-center justify-center p-12 lg:p-16">
-              {/* Large emoji / product visual */}
-              <div className="relative">
-                <div className="w-48 h-48 sm:w-64 sm:h-64 rounded-3xl overflow-hidden bg-white/60 backdrop-blur-sm shadow-2xl shadow-brand-green/5">
+        {/* Product grid — show ALL products */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+          {products.map((product) => {
+            const sizeIdx = getSize(product.id);
+            const currentPrice = product.sizes[sizeIdx].price;
+            const justAdded = addedIds.has(product.id);
+
+            return (
+              <div
+                key={product.id}
+                className="group relative bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-brand-green/5 hover:border-brand-green/20 transition-all duration-300 hover:-translate-y-1"
+              >
+                {/* Image */}
+                <Link href="/shop" className="block relative aspect-square bg-brand-cream overflow-hidden">
                   <Image
                     src={product.image}
                     alt={product.name}
                     width={400}
                     height={400}
-                    className="w-full h-full object-cover transition-all duration-500"
-                    key={product.id}
+                    className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500"
                   />
-                </div>
-
-                {/* Floating badge */}
-                {product.badge && (
-                  <div className="absolute -top-2 -right-2 px-4 py-1.5 bg-brand-green-dark text-white text-xs font-bold tracking-wider uppercase rounded-full shadow-lg">
-                    {product.badge}
-                  </div>
-                )}
-
-                {/* Decorative ring */}
-                <div className="absolute inset-0 -m-6 rounded-full border-2 border-dashed border-brand-green/10 animate-spin-slow" />
-              </div>
-            </div>
-
-            {/* Right — Info */}
-            <div className="p-8 lg:p-16 lg:pr-20 space-y-6" key={product.id}>
-              {/* Category */}
-              <span className="inline-block px-3 py-1 bg-brand-green/10 text-brand-green text-xs font-semibold uppercase tracking-wider rounded-full">
-                {product.category}
-              </span>
-
-              {/* Name */}
-              <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-brand-green-dark leading-tight">
-                {product.name}
-              </h3>
-
-              {/* Description */}
-              <p className="text-lg text-gray-500 leading-relaxed max-w-md">
-                {product.description}
-              </p>
-
-              {/* Ingredients */}
-              <div className="space-y-3">
-                <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">
-                  Ingredients
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {product.ingredients.map((ing) => (
-                    <span
-                      key={ing}
-                      className="px-3.5 py-1.5 bg-white border border-gray-100 text-sm font-medium text-gray-700 rounded-xl shadow-sm"
-                    >
-                      {ing}
+                  {product.badge && (
+                    <span className="absolute top-2 left-2 px-2.5 py-1 bg-brand-orange text-white text-[10px] font-bold tracking-wider uppercase rounded-full shadow">
+                      {product.badge}
                     </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Benefits */}
-              <div className="space-y-3">
-                <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">
-                  Benefits
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {product.benefits.map((b) => (
-                    <span
-                      key={b}
-                      className="px-3.5 py-1.5 bg-brand-gold/10 text-brand-gold text-sm font-semibold rounded-xl"
-                    >
-                      {b}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Price & CTA */}
-              <div className="flex items-center gap-6 pt-4">
-                <div>
-                  <p className="text-xs text-gray-400 mb-1">Starting from</p>
-                  <p className="text-3xl font-bold text-brand-green-dark">
-                    {formatCurrency(product.sizes[0].price)}
-                  </p>
-                </div>
-                <Link
-                  href="/shop"
-                  className="group inline-flex items-center gap-2 px-7 py-3.5 bg-brand-green-dark text-white font-bold rounded-xl hover:bg-brand-green transition-all duration-300 hover:scale-[1.02] shadow-lg shadow-brand-green/20"
-                >
-                  Order Now
-                  <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                  )}
+                  <span className="absolute top-2 right-2 text-sm">
+                    {categoryEmoji[product.category]}
+                  </span>
                 </Link>
-              </div>
-            </div>
-          </div>
 
-          {/* Navigation arrows */}
-          <div className="absolute bottom-6 left-8 lg:left-auto lg:bottom-8 lg:right-8 flex items-center gap-3">
-            <button
-              onClick={prev}
-              className="w-11 h-11 rounded-full bg-white/80 backdrop-blur-sm border border-gray-200 flex items-center justify-center hover:bg-white hover:shadow-md transition-all"
-              aria-label="Previous product"
-            >
-              <ArrowLeft className="w-4 h-4 text-gray-700" />
-            </button>
-            <span className="text-sm font-semibold text-gray-400 min-w-[3rem] text-center">
-              {current + 1}/{featured.length}
-            </span>
-            <button
-              onClick={next}
-              className="w-11 h-11 rounded-full bg-brand-green-dark text-white flex items-center justify-center hover:bg-brand-green hover:shadow-md transition-all"
-              aria-label="Next product"
-            >
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
+                {/* Info */}
+                <div className="p-3 sm:p-4 space-y-2">
+                  <Link href="/shop">
+                    <h3 className="font-bold text-sm sm:text-base text-brand-green-dark leading-tight truncate">
+                      {product.name}
+                    </h3>
+                  </Link>
+                  <p className="text-xs text-gray-400 line-clamp-1 leading-relaxed">
+                    {product.ingredients.join(" · ")}
+                  </p>
+
+                  {/* Size selector */}
+                  {product.sizes.length > 1 && (
+                    <div className="flex gap-1.5">
+                      {product.sizes.map((size, idx) => (
+                        <button
+                          key={size.label}
+                          onClick={() => setSize(product.id, idx)}
+                          className={cn(
+                            "px-2 py-1 text-[11px] font-semibold rounded-lg border transition-all duration-200",
+                            sizeIdx === idx
+                              ? "bg-brand-green-dark text-white border-brand-green-dark"
+                              : "bg-gray-50 text-gray-500 border-gray-200 hover:border-brand-green/40"
+                          )}
+                        >
+                          {size.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Price & Add */}
+                  <div className="flex items-center justify-between pt-1">
+                    <p className="text-lg font-bold text-brand-green">
+                      {formatCurrency(currentPrice)}
+                    </p>
+                    <button
+                      onClick={() => handleAdd(product)}
+                      disabled={!product.inStock}
+                      className={cn(
+                        "w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200",
+                        justAdded
+                          ? "bg-green-500 text-white scale-90"
+                          : product.inStock
+                            ? "bg-brand-green-dark text-white hover:bg-brand-green hover:scale-105"
+                            : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      )}
+                    >
+                      {justAdded ? (
+                        <Check className="w-3.5 h-3.5" />
+                      ) : (
+                        <ShoppingBag className="w-3.5 h-3.5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Product thumbnails / quick nav */}
-        <div className="mt-8 flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
-          {featured.map((p, i) => (
-            <button
-              key={p.id}
-              onClick={() => setCurrent(i)}
-              className={cn(
-                "shrink-0 flex items-center gap-2.5 px-4 py-3 rounded-xl border transition-all duration-300",
-                current === i
-                  ? "bg-brand-green-dark text-white border-brand-green-dark shadow-lg shadow-brand-green/15"
-                  : "bg-white text-gray-600 border-gray-100 hover:border-brand-green/30 hover:bg-gray-50"
-              )}
-            >
-              <span className="w-7 h-7 rounded-lg overflow-hidden shrink-0">
-                <Image src={p.image} alt={p.name} width={28} height={28} className="w-full h-full object-cover" />
-              </span>
-              <span className="text-sm font-semibold whitespace-nowrap">
-                {p.name}
-              </span>
-            </button>
-          ))}
+        {/* CTA */}
+        <div className="mt-12 text-center">
+          <Link
+            href="/shop"
+            className="group inline-flex items-center gap-3 px-8 py-4 bg-brand-orange text-white font-bold text-lg rounded-full hover:bg-brand-gold transition-all duration-300 hover:scale-[1.03] shadow-xl shadow-brand-orange/20"
+          >
+            Order Now
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </Link>
         </div>
       </div>
     </section>
