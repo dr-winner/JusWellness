@@ -39,7 +39,7 @@ const features = [
 
 export default function WhyJus() {
   return (
-    <section className="relative py-24 sm:py-32 bg-brand-cream/40">
+    <section className="relative py-24 sm:py-32 bg-brand-cream/50">
       {/* Decorative */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand-green/10 to-transparent" />
 

@@ -1,17 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #1a1a1a;
-  --brand-green: #2d6a4f;
-  --brand-green-light: #40916c;
-  --brand-green-dark: #1b4332;
-  --brand-gold: #d4a017;
-  --brand-gold-light: #f0c929;
-  --brand-cream: #fefae0;
-  --brand-orange: #e76f51;
-  --brand-peach: #ffdab9;
-  --brand-sage: #b7e4c7;
+  --background: #fffdf8;
+  --foreground: #2c2c2c;
+  --brand-green: #3a7d5c;
+  --brand-green-light: #5bab80;
+  --brand-green-dark: #234a38;
+  --brand-gold: #e8a838;
+  --brand-gold-light: #f5c563;
+  --brand-cream: #fef9ed;
+  --brand-orange: #f07050;
+  --brand-peach: #ffe4d6;
+  --brand-sage: #d4e8d8;
+  --brand-sand: #f5f0e8;
+  --brand-charcoal: #2c3e36;
 }
 
 @theme inline {
@@ -26,6 +28,8 @@
   --color-brand-orange: var(--brand-orange);
   --color-brand-peach: var(--brand-peach);
   --color-brand-sage: var(--brand-sage);
+  --color-brand-sand: var(--brand-sand);
+  --color-brand-charcoal: var(--brand-charcoal);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -39,6 +43,12 @@ body {
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+}
+
+:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--brand-gold) 70%, white);
+  outline-offset: 3px;
 }
 
 /* Premium scrollbar */
@@ -87,8 +97,8 @@ html {
   100% { transform: translateX(-50%); }
 }
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 15px rgba(45, 106, 79, 0.25); }
-  50% { box-shadow: 0 0 35px rgba(45, 106, 79, 0.5); }
+  0%, 100% { box-shadow: 0 0 15px rgba(58, 125, 92, 0.2); }
+  50% { box-shadow: 0 0 35px rgba(58, 125, 92, 0.4); }
 }
 @keyframes shimmer {
   0% { background-position: -200% 0; }
@@ -135,6 +145,21 @@ html {
   animation: spin-slow 20s linear infinite;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
 /* Delay utilities */
 .delay-100 { animation-delay: 100ms; }
 .delay-200 { animation-delay: 200ms; }
@@ -152,10 +177,10 @@ html {
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 .glass-dark {
-  background: rgba(27, 67, 50, 0.8);
+  background: rgba(35, 74, 56, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Text gradient */

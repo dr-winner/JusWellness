@@ -1,6 +1,5 @@
-"use client";
-
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Leaf, Sparkles, ChevronDown } from "lucide-react";
 
 const marqueeItems = [
@@ -18,19 +17,12 @@ const marqueeItems = [
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex flex-col overflow-hidden bg-brand-green-dark">
+    <section className="relative min-h-[92svh] flex flex-col overflow-hidden bg-gradient-to-br from-brand-charcoal via-brand-green-dark to-brand-charcoal">
       {/* Gradient mesh background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_20%_50%,rgba(64,145,108,0.3),transparent_60%)]" />
-        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_80%_20%,rgba(212,160,23,0.15),transparent_50%)]" />
-        <div className="absolute bottom-0 left-1/2 w-full h-1/2 bg-[radial-gradient(ellipse_at_50%_100%,rgba(45,106,79,0.4),transparent_70%)]" />
-      </div>
-
-      {/* Floating orbs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[15%] left-[10%] w-64 h-64 rounded-full bg-brand-green/10 blur-3xl animate-float" />
-        <div className="absolute top-[60%] right-[5%] w-48 h-48 rounded-full bg-brand-gold/10 blur-3xl animate-float delay-1000" />
-        <div className="absolute top-[40%] right-[30%] w-32 h-32 rounded-full bg-brand-sage/10 blur-2xl animate-float delay-500" />
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_20%_50%,rgba(91,171,128,0.2),transparent_60%)]" />
+        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_80%_20%,rgba(232,168,56,0.12),transparent_50%)]" />
+        <div className="absolute bottom-0 left-1/2 w-full h-1/2 bg-[radial-gradient(ellipse_at_50%_100%,rgba(58,125,92,0.3),transparent_70%)]" />
       </div>
 
       {/* Main content */}
@@ -52,7 +44,7 @@ export default function Hero() {
               <br />
               <span className="text-white">Every Day —</span>
               <br />
-              <span className="text-gradient bg-gradient-to-r from-brand-gold via-brand-gold-light to-brand-gold bg-clip-text text-transparent">
+              <span className="text-gradient bg-gradient-to-r from-brand-gold via-brand-orange to-brand-gold bg-clip-text text-transparent">
                 Fresh Fresh.
               </span>
             </h1>
@@ -65,7 +57,7 @@ export default function Hero() {
             <div className="animate-fade-in-up opacity-0 delay-300 flex flex-col sm:flex-row gap-4">
               <Link
                 href="/shop"
-                className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-brand-green-dark font-bold text-lg rounded-full hover:bg-brand-cream transition-all duration-300 hover:scale-[1.03] shadow-2xl shadow-black/20"
+                className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-brand-orange text-white font-bold text-lg rounded-full hover:bg-brand-gold transition-all duration-300 hover:scale-[1.03] shadow-2xl shadow-brand-orange/30"
               >
                 Order Now
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -85,13 +77,13 @@ export default function Hero() {
             </div>
 
             {/* Social proof */}
-            <div className="animate-fade-in-up opacity-0 delay-400 flex items-center gap-5">
+            <div className="animate-fade-in-up opacity-0 delay-400 flex flex-wrap items-center gap-5">
               <div className="flex items-center gap-2">
                 <div className="flex -space-x-2">
                   {["🟤", "🟡", "🟠", "🔵"].map((_, i) => (
                     <div
                       key={i}
-                      className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-gold/40 to-brand-green/40 border-2 border-brand-green-dark flex items-center justify-center text-[10px]"
+                      className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-peach to-brand-sage border-2 border-brand-charcoal flex items-center justify-center text-[10px] font-bold text-brand-charcoal"
                     >
                       {["AK", "KM", "EO", "YB"][i]}
                     </div>
@@ -112,24 +104,25 @@ export default function Hero() {
           </div>
 
           {/* Right — Product showcase */}
-          <div className="relative hidden lg:flex items-center justify-center">
+          <div className="relative hidden lg:flex items-center justify-center animate-scale-in opacity-0 delay-300">
             <div className="relative w-[420px] h-[420px]">
               {/* Spinning ring */}
               <div className="absolute inset-0 rounded-full border border-white/5 animate-spin-slow" />
               <div className="absolute inset-4 rounded-full border border-dashed border-white/8" />
 
-              {/* Center content */}
-              <div className="absolute inset-12 rounded-full bg-gradient-to-br from-brand-green/30 to-brand-green-dark/60 glass-dark flex items-center justify-center">
-                <div className="text-center space-y-3">
-                  <p className="text-6xl">🧃</p>
-                  <div>
-                    <p className="text-white font-bold text-xl tracking-tight">22 Flavours</p>
-                    <p className="text-white/50 text-sm">Made fresh daily</p>
-                  </div>
-                  <div className="flex items-center justify-center gap-1.5 pt-1">
-                    <span className="text-xs text-brand-gold font-semibold">from</span>
-                    <span className="text-2xl font-bold text-white">GHS 13</span>
-                  </div>
+              {/* Center content with beautiful generated image */}
+              <div className="absolute inset-10 rounded-full overflow-hidden border border-white/10 shadow-2xl bg-brand-charcoal/40 group">
+                <Image
+                  src="/hero-juice.png"
+                  alt="Premium Cold-Pressed Juices"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  priority
+                  sizes="420px"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent flex flex-col justify-end pb-8 px-6 text-center">
+                  <p className="text-white font-bold text-xl tracking-tight">Vibrant & Fresh</p>
+                  <p className="text-brand-gold text-sm font-semibold">Made Daily in Accra</p>
                 </div>
               </div>
 
@@ -142,10 +135,10 @@ export default function Hero() {
               ].map((item, i) => (
                 <div
                   key={item.name}
-                  className={`absolute ${item.pos} animate-float`}
-                  style={{ animationDelay: `${i * 600}ms` }}
+                  className={`absolute ${item.pos} animate-fade-in-up opacity-0`}
+                  style={{ animationDelay: `${600 + i * 100}ms` }}
                 >
-                  <div className="glass-dark rounded-2xl px-4 py-2.5 flex items-center gap-2 shadow-xl">
+                  <div className="glass-dark rounded-2xl px-4 py-2.5 flex items-center gap-2 shadow-xl hover:scale-105 transition-transform cursor-default">
                     <span className="text-lg">{item.emoji}</span>
                     <span className="text-xs font-semibold text-white whitespace-nowrap">{item.name}</span>
                   </div>

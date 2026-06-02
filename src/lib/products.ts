@@ -1,25 +1,14 @@
 import { Product } from "./types";
 
-const CLOUD = "dqcejwbxk";
-const img = (id: string) =>
-  `https://res.cloudinary.com/${CLOUD}/image/upload/f_auto,q_auto,w_600/jus-wellness/products/${id}`;
-
-// Placeholder gradient SVG while awaiting real product photos
-const placeholder = (color: string) =>
-  `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:${color};stop-opacity:0.8"/><stop offset="100%" style="stop-color:#1a3a2a;stop-opacity:1"/></linearGradient></defs><rect fill="url(#g)" width="600" height="600" rx="24"/><text x="300" y="310" font-family="system-ui" font-size="28" fill="white" text-anchor="middle" opacity="0.7">Jus Wellness</text></svg>`)}`;
-
-const placeholders: Record<string, string> = {
-  juice: placeholder("#2d6a4f"),
-  coconut: placeholder("#b08d57"),
-  mashke: placeholder("#7b2d8b"),
-  shot: placeholder("#d4a017"),
-};
+// Use local placeholder images for development.
+// Replace with Cloudinary URLs when real product photos are uploaded:
+// const CLOUD = "dqcejwbxk";
+// const img = (id: string) => `https://res.cloudinary.com/${CLOUD}/image/upload/f_auto,q_auto,w_800/jus-wellness/products/${id}`;
+const img = (id: string) => `/products/${id}.svg`;
 
 const juiceSizes = [
-  { label: "250ml", ml: 250, price: 13 },
-  { label: "350ml", ml: 350, price: 20 },
-  { label: "500ml", ml: 500, price: 25 },
-  { label: "5 Litre", ml: 5000, price: 280 },
+  { label: "250ml", ml: 250, price: 15 },
+  { label: "500ml", ml: 500, price: 30 },
 ];
 
 export const products: Product[] = [
@@ -30,7 +19,7 @@ export const products: Product[] = [
     description:
       "A bold, earthy blend that gets your blood pumping. Beetroot power meets tropical zing.",
     sizes: juiceSizes,
-    image: placeholders.juice,
+    image: img("img-000"),
     category: "juice",
     ingredients: ["Beetroot", "Watermelon", "Lemon", "Ginger", "Pineapple"],
     benefits: ["Iron Boost", "Heart Health", "Energy"],
@@ -43,7 +32,7 @@ export const products: Product[] = [
     description:
       "Pure mango goodness — sweet, thick, and irresistible. No mix, no dilution, just mango.",
     sizes: juiceSizes,
-    image: placeholders.juice,
+    image: img("img-001"),
     category: "juice",
     ingredients: ["Mango"],
     benefits: ["Vitamin A", "Antioxidants", "Skin Glow"],
@@ -55,7 +44,7 @@ export const products: Product[] = [
     description:
       "Light, refreshing, and hydrating. The perfect post-workout cool-down.",
     sizes: juiceSizes,
-    image: placeholders.juice,
+    image: img("img-002"),
     category: "juice",
     ingredients: ["Watermelon", "Mint"],
     benefits: ["Hydration", "Cooling", "Low Calorie"],
@@ -68,7 +57,7 @@ export const products: Product[] = [
     description:
       "Golden tropical vibes with a carrot kick. Tastes like sunshine in a bottle.",
     sizes: juiceSizes,
-    image: placeholders.juice,
+    image: img("img-003"),
     category: "juice",
     ingredients: ["Pineapple", "Carrot"],
     benefits: ["Vitamin A", "Vision Health", "Immune Support"],
@@ -80,7 +69,7 @@ export const products: Product[] = [
     description:
       "Classic orange juice, freshly squeezed. Simple, pure, and packed with vitamin C.",
     sizes: juiceSizes,
-    image: placeholders.juice,
+    image: img("img-004"),
     category: "juice",
     ingredients: ["Orange"],
     benefits: ["Vitamin C", "Immune Boost", "Energy"],
@@ -92,7 +81,7 @@ export const products: Product[] = [
     description:
       "A rich, creamy Ghanaian superfood blend. Tiger nut meets dates and prekese for deep nutrition.",
     sizes: juiceSizes,
-    image: placeholders.juice,
+    image: img("img-005"),
     category: "juice",
     ingredients: ["Tiger Nut", "Dates", "Prekese", "Ginger"],
     benefits: ["Aphrodisiac", "Energy", "Gut Health"],
@@ -105,7 +94,7 @@ export const products: Product[] = [
     description:
       "Citrus meets spice — orange and pineapple lifted by a ginger punch.",
     sizes: juiceSizes,
-    image: placeholders.juice,
+    image: img("img-006"),
     category: "juice",
     ingredients: ["Orange", "Pineapple", "Ginger"],
     benefits: ["Vitamin C", "Digestion", "Anti-inflammatory"],
@@ -117,7 +106,7 @@ export const products: Product[] = [
     description:
       "Light and clean — pineapple sweetness balanced by cool cucumber and mint. Your gym buddy.",
     sizes: juiceSizes,
-    image: placeholders.juice,
+    image: img("img-007"),
     category: "juice",
     ingredients: ["Pineapple", "Cucumber", "Mint"],
     benefits: ["Low Calorie", "Hydration", "Detox"],
@@ -130,7 +119,7 @@ export const products: Product[] = [
     description:
       "Creamy, warming, and indulgent. Tiger nuts and coconut with a ginger hug. A natural aphrodisiac.",
     sizes: juiceSizes,
-    image: placeholders.juice,
+    image: img("img-008"),
     category: "juice",
     ingredients: ["Tiger Nuts", "Dates", "Coconut", "Ginger"],
     benefits: ["Aphrodisiac", "Energy", "Protein"],
@@ -143,7 +132,7 @@ export const products: Product[] = [
     description:
       "Pineapple sweetness with a fiery ginger kick. Wakes you up better than coffee.",
     sizes: juiceSizes,
-    image: placeholders.juice,
+    image: img("img-009"),
     category: "juice",
     ingredients: ["Pineapple", "Ginger"],
     benefits: ["Anti-inflammatory", "Metabolism", "Digestion"],
@@ -155,7 +144,7 @@ export const products: Product[] = [
     description:
       "A zesty powerhouse — orange, lemon, carrot, and ginger for maximum immunity.",
     sizes: juiceSizes,
-    image: placeholders.juice,
+    image: img("img-010"),
     category: "juice",
     ingredients: ["Orange", "Lemon", "Carrot", "Ginger"],
     benefits: ["Immune Boost", "Vitamin C", "Anti-inflammatory"],
@@ -167,7 +156,7 @@ export const products: Product[] = [
     description:
       "Tropical euphoria — pineapple meets passion fruit for a tangy-sweet explosion.",
     sizes: juiceSizes,
-    image: placeholders.juice,
+    image: img("img-011"),
     category: "juice",
     ingredients: ["Pineapple", "Passion Fruit"],
     benefits: ["Mood Boost", "Vitamin C", "Antioxidants"],
@@ -180,7 +169,7 @@ export const products: Product[] = [
     description:
       "Start your morning right — pineapple, ginger, and coconut. Energizing and tropical.",
     sizes: juiceSizes,
-    image: placeholders.juice,
+    image: img("img-012"),
     category: "juice",
     ingredients: ["Pineapple", "Ginger", "Coconut"],
     benefits: ["Energy", "Hydration", "Metabolism"],
@@ -192,7 +181,7 @@ export const products: Product[] = [
     description:
       "Pure pineapple. Nothing else. Just the queen of tropical fruits, freshly pressed.",
     sizes: juiceSizes,
-    image: placeholders.juice,
+    image: img("img-013"),
     category: "juice",
     ingredients: ["Pineapple"],
     benefits: ["Bromelain", "Digestion", "Vitamin C"],
@@ -204,7 +193,7 @@ export const products: Product[] = [
     description:
       "Pineapple, ginger, and beetroot — a triple threat for energy and detox.",
     sizes: juiceSizes,
-    image: placeholders.juice,
+    image: img("img-014"),
     category: "juice",
     ingredients: ["Pineapple", "Ginger", "Beetroot"],
     benefits: ["Detox", "Iron Boost", "Energy"],
@@ -216,7 +205,7 @@ export const products: Product[] = [
     description:
       "Our mystery blend — a surprise flavour that changes weekly. Ask us what's in it today!",
     sizes: juiceSizes,
-    image: placeholders.juice,
+    image: img("img-015"),
     category: "juice",
     ingredients: ["Mystery Blend"],
     benefits: ["Surprise", "Limited Edition"],
@@ -231,7 +220,7 @@ export const products: Product[] = [
     description:
       "Pure coconut water — no additions, no sugar. Nature's perfect electrolyte drink.",
     sizes: [{ label: "500ml", ml: 500, price: 25 }],
-    image: placeholders.coconut,
+    image: img("img-016"),
     category: "coconut",
     ingredients: ["Coconut Water"],
     benefits: ["Hydration", "Electrolytes", "Natural"],
@@ -247,7 +236,7 @@ export const products: Product[] = [
       { label: "500ml", ml: 500, price: 30 },
       { label: "5 Litre", ml: 5000, price: 280 },
     ],
-    image: placeholders.coconut,
+    image: img("img-017"),
     category: "coconut",
     ingredients: ["Coconut Water", "Chia Seeds"],
     benefits: ["Omega-3", "Fibre", "Hydration"],
@@ -264,7 +253,7 @@ export const products: Product[] = [
       { label: "500ml", ml: 500, price: 30 },
       { label: "5 Litre", ml: 5000, price: 280 },
     ],
-    image: placeholders.coconut,
+    image: img("img-018"),
     category: "coconut",
     ingredients: ["Coconut Water", "Mint", "Lime"],
     benefits: ["Cooling", "Hydration", "Digestion"],
@@ -278,7 +267,7 @@ export const products: Product[] = [
     description:
       "Our signature blended drink — thick, creamy, and packed with flavour. A premium treat.",
     sizes: [{ label: "500ml", ml: 500, price: 25 }],
-    image: placeholders.mashke,
+    image: img("img-019"),
     category: "mashke",
     ingredients: ["Premium Blend"],
     benefits: ["Filling", "Energy", "Indulgent"],
@@ -293,7 +282,7 @@ export const products: Product[] = [
     description:
       "A fiery immune-boosting shot. Ginger, turmeric, black pepper, orange, and lemon — one sip, maximum impact.",
     sizes: [{ label: "60ml", ml: 60, price: 15 }],
-    image: placeholders.shot,
+    image: img("img-020"),
     category: "shot",
     ingredients: ["Ginger", "Turmeric", "Black Pepper", "Orange", "Lemon"],
     benefits: ["Immune Boost", "Anti-inflammatory", "Metabolism"],
@@ -306,7 +295,7 @@ export const products: Product[] = [
     description:
       "Feeling heavy? This shot flattens and soothes. Celery, cucumber, ginger, and lemon.",
     sizes: [{ label: "60ml", ml: 60, price: 15 }],
-    image: placeholders.shot,
+    image: img("img-021"),
     category: "shot",
     ingredients: ["Celery", "Cucumber", "Ginger", "Lemon"],
     benefits: ["De-bloat", "Digestion", "Gut Health"],
@@ -318,7 +307,7 @@ export const products: Product[] = [
     description:
       "Heal your gut from the inside. Apple, ginger, lemon, and honey for a happy tummy.",
     sizes: [{ label: "60ml", ml: 60, price: 15 }],
-    image: placeholders.shot,
+    image: img("img-020"),
     category: "shot",
     ingredients: ["Apple", "Ginger", "Lemon", "Honey"],
     benefits: ["Gut Health", "Probiotics", "Soothing"],

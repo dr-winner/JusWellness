@@ -19,7 +19,9 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { Product, CartItem } from "@/lib/types";
+import { Product } from "@/lib/types";
+import { useCart } from "@/lib/cart-context";
+import { motion, AnimatePresence } from "framer-motion";
 
 const categoryEmoji: Record<string, string> = {
   juice: "🧃",
@@ -36,17 +38,18 @@ const bgAccents: Record<string, string> = {
 };
 
 export default function ShopPage() {
+  const { cart, addToCart: ctxAddToCart, updateQuantity, cartCount: ctxCartCount, cartTotal, orderTotal, hydrated } = useCart();
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [cart, setCart] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
-  const [selectedSizes, setSelectedSizes] = useState<Record<string, number>>({});
   const [checkoutStep, setCheckoutStep] = useState<"cart" | "details">("cart");
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
-  const [addedAnimation, setAddedAnimation] = useState(false);
+  const [addedProductId, setAddedProductId] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
+
+  const cartCount = hydrated ? ctxCartCount : 0;
 
   const filtered =
     activeCategory === "all"
@@ -56,54 +59,34 @@ export default function ShopPage() {
   const product = filtered[selectedIndex] || filtered[0];
 
   useEffect(() => {
-    setSelectedIndex(0);
-  }, [activeCategory]);
+    if (!cartOpen) return;
 
-  const getSelectedSize = (productId: string) => selectedSizes[productId] ?? 0;
+    const handler = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setCartOpen(false);
+    };
 
-  const setSize = (productId: string, sizeIndex: number) => {
-    setSelectedSizes((prev) => ({ ...prev, [productId]: sizeIndex }));
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [cartOpen]);
+
+  const addToCartForSize = (product: Product, sizeIndex: number) => {
+    setAddedProductId(`${product.id}-${sizeIndex}`);
+    setTimeout(() => setAddedProductId(null), 1200);
+    ctxAddToCart(product, sizeIndex);
   };
 
-  const addToCart = (product: Product) => {
-    const sizeIndex = getSelectedSize(product.id);
-    setAddedAnimation(true);
-    setTimeout(() => setAddedAnimation(false), 1500);
-    setCart((prev) => {
-      const existing = prev.find(
-        (item) => item.product.id === product.id && item.sizeIndex === sizeIndex
-      );
-      if (existing) {
-        return prev.map((item) =>
-          item.product.id === product.id && item.sizeIndex === sizeIndex
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-      return [...prev, { product, sizeIndex, quantity: 1 }];
-    });
-  };
-
-  const updateQuantity = (productId: string, sizeIndex: number, delta: number) => {
-    setCart((prev) =>
-      prev
-        .map((item) =>
-          item.product.id === productId && item.sizeIndex === sizeIndex
-            ? { ...item, quantity: item.quantity + delta }
-            : item
-        )
-        .filter((item) => item.quantity > 0)
+  const getCartQty = (productId: string, sizeIndex: number): number => {
+    if (!hydrated) return 0;
+    const item = cart.find(
+      (c) => c.product.id === productId && c.sizeIndex === sizeIndex
     );
+    return item?.quantity ?? 0;
   };
 
-  const cartTotal = cart.reduce(
-    (sum, item) => sum + item.product.sizes[item.sizeIndex].price * item.quantity,
-    0
-  );
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-  const deliveryFee = cartTotal >= 100 ? 0 : 10;
-  const orderTotal = cartTotal + deliveryFee;
+  const isAnyInCart = (productId: string): boolean => {
+    if (!hydrated) return false;
+    return cart.some((c) => c.product.id === productId);
+  };
 
   const whatsappOrderMessage = () => {
     const items = cart
@@ -122,21 +105,15 @@ export default function ShopPage() {
       `*Items:*`,
       items,
       ``,
-      `*Subtotal:* ${formatCurrency(cartTotal)}`,
-      `*Delivery:* ${deliveryFee === 0 ? "FREE 🎉" : formatCurrency(deliveryFee)}`,
       `━━━━━━━━━━━━━━`,
       `*TOTAL: ${formatCurrency(orderTotal)}*`,
       ``,
-      `Please confirm availability and delivery time 🙏`,
+      `Hi! I'd like to place this order. Please send me payment details 🙏`,
     ];
     return lines.join("\n");
   };
 
-  const sizeIdx = getSelectedSize(product.id);
-  const currentPrice = product.sizes[sizeIdx].price;
-  const inCart = cart.find(
-    (item) => item.product.id === product.id && item.sizeIndex === sizeIdx
-  );
+  const lowestPrice = Math.min(...product.sizes.map((s) => s.price));
 
   const goNext = () => setSelectedIndex((i) => Math.min(i + 1, filtered.length - 1));
   const goPrev = () => setSelectedIndex((i) => Math.max(i - 1, 0));
@@ -145,7 +122,7 @@ export default function ShopPage() {
     <>
       <Navbar cartCount={cartCount} />
 
-      <main className="pt-24 pb-20 min-h-screen bg-gray-50/50">
+      <main className="pt-24 pb-20 min-h-screen bg-brand-sand/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center space-y-4 mb-8 pt-4">
@@ -164,8 +141,13 @@ export default function ShopPage() {
           <div className="flex flex-wrap justify-center gap-2 mb-10">
             {categories.map((cat) => (
               <button
+                type="button"
                 key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
+                onClick={() => {
+                  setActiveCategory(cat.id);
+                  setSelectedIndex(0);
+                }}
+                aria-pressed={activeCategory === cat.id}
                 className={cn(
                   "flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300",
                   activeCategory === cat.id
@@ -188,172 +170,221 @@ export default function ShopPage() {
                 bgAccents[product.category]
               )}
             >
-              <div className="grid md:grid-cols-2 gap-6 items-center min-h-[520px]">
+              <div className="grid md:grid-cols-2 gap-6 items-center min-h-[580px]">
                 {/* Left — Visual */}
                 <div className="relative flex items-center justify-center p-10 md:p-14">
-                  <div className="relative">
-                    <div className="w-44 h-44 sm:w-56 sm:h-56 rounded-3xl overflow-hidden bg-white/70 backdrop-blur-sm flex items-center justify-center shadow-2xl shadow-black/5">
-                      <Image
-                        src={product.image}
-                        alt={product.name}
-                        width={300}
-                        height={300}
-                        className="w-full h-full object-cover"
-                        key={product.id}
-                      />
-                    </div>
-                    {product.badge && (
-                      <div className="absolute -top-1 -right-1 px-3 py-1 bg-brand-orange text-white text-[10px] font-bold tracking-wider uppercase rounded-full shadow-lg">
-                        {product.badge}
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={product.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.3 }}
+                      className="relative"
+                    >
+                      <div className="w-56 h-56 sm:w-72 sm:h-72 rounded-3xl overflow-hidden bg-white/70 backdrop-blur-sm flex items-center justify-center shadow-2xl shadow-black/5">
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          width={400}
+                          height={400}
+                          sizes="(min-width: 768px) 320px, 288px"
+                          className="w-full h-full object-contain p-2"
+                        />
                       </div>
-                    )}
-                    <div className="absolute inset-0 -m-5 rounded-full border border-dashed border-brand-green/10 animate-spin-slow" />
-                  </div>
+                      {product.badge && (
+                        <div className="absolute -top-1 -right-1 px-3 py-1 bg-brand-orange text-white text-[10px] font-bold tracking-wider uppercase rounded-full shadow-lg">
+                          {product.badge}
+                        </div>
+                      )}
+                      <div className="absolute inset-0 -m-5 rounded-full border border-dashed border-brand-green/10 animate-spin-slow pointer-events-none" />
+                    </motion.div>
+                  </AnimatePresence>
 
                   {/* Nav arrows — mobile */}
                   <div className="absolute bottom-4 left-4 right-4 flex justify-between md:hidden">
-                    <button onClick={goPrev} disabled={selectedIndex === 0} className="w-10 h-10 rounded-full bg-white/80 border border-gray-200 flex items-center justify-center disabled:opacity-30">
+                    <button type="button" onClick={goPrev} disabled={selectedIndex === 0} aria-label="Previous product" className="w-10 h-10 rounded-full bg-white/80 border border-gray-200 flex items-center justify-center disabled:opacity-30">
                       <ChevronLeft className="w-4 h-4" />
                     </button>
                     <span className="text-xs font-semibold text-gray-400 self-center">
                       {selectedIndex + 1} / {filtered.length}
                     </span>
-                    <button onClick={goNext} disabled={selectedIndex === filtered.length - 1} className="w-10 h-10 rounded-full bg-brand-green-dark text-white flex items-center justify-center disabled:opacity-30">
+                    <button type="button" onClick={goNext} disabled={selectedIndex === filtered.length - 1} aria-label="Next product" className="w-10 h-10 rounded-full bg-brand-green-dark text-white flex items-center justify-center disabled:opacity-30">
                       <ChevronRight className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
 
                 {/* Right — Info */}
-                <div className="p-6 md:p-10 md:pr-12 space-y-5" key={product.id}>
-                  <span className="inline-block px-3 py-1 bg-brand-green/10 text-brand-green text-[10px] font-semibold uppercase tracking-widest rounded-full">
-                    {product.category}
-                  </span>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className="p-6 md:p-10 md:pr-12 space-y-5"
+                  >
+                    <span className="inline-block px-3 py-1 bg-brand-green/10 text-brand-green text-[10px] font-semibold uppercase tracking-widest rounded-full">
+                      {product.category}
+                    </span>
 
-                  <h2 className="text-3xl sm:text-4xl font-bold text-brand-green-dark leading-tight">
-                    {product.name}
-                  </h2>
+                    <h2 className="text-3xl sm:text-4xl font-bold text-brand-green-dark leading-tight">
+                      {product.name}
+                    </h2>
 
-                  <p className="text-gray-500 leading-relaxed">
-                    {product.description}
-                  </p>
-
-                  {/* Ingredients */}
-                  <div className="space-y-2.5">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-400">
-                      Ingredients
+                    <p className="text-gray-500 leading-relaxed text-sm">
+                      {product.description}
                     </p>
-                    <div className="flex flex-wrap gap-2">
-                      {product.ingredients.map((ing) => (
-                        <span
-                          key={ing}
-                          className="px-3 py-1.5 bg-white border border-gray-100 text-sm font-medium text-gray-700 rounded-xl shadow-sm"
-                        >
-                          {ing}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
 
-                  {/* Benefits */}
-                  <div className="space-y-2.5">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-400">
-                      Benefits
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {product.benefits.map((b) => (
-                        <span
-                          key={b}
-                          className="px-3 py-1.5 bg-brand-gold/10 text-brand-gold text-sm font-semibold rounded-xl"
-                        >
-                          {b}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Size selector */}
-                  {product.sizes.length > 1 && (
+                    {/* Ingredients */}
                     <div className="space-y-2.5">
                       <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-400">
-                        Size
+                        Ingredients
                       </p>
-                      <div className="flex gap-2">
-                        {product.sizes.map((size, idx) => (
-                          <button
-                            key={size.label}
-                            onClick={() => setSize(product.id, idx)}
-                            className={cn(
-                              "px-4 py-2 text-sm font-semibold rounded-xl border transition-all duration-200",
-                              sizeIdx === idx
-                                ? "bg-brand-green-dark text-white border-brand-green-dark shadow-md"
-                                : "bg-white text-gray-600 border-gray-200 hover:border-brand-green/40"
-                            )}
+                      <div className="flex flex-wrap gap-2">
+                        {product.ingredients.map((ing) => (
+                          <span
+                            key={ing}
+                            className="px-3 py-1.5 bg-white border border-gray-100 text-xs font-semibold text-gray-700 rounded-xl shadow-sm"
                           >
-                            {size.label}
-                            <span className="block text-[10px] font-normal mt-0.5 opacity-70">
-                              {formatCurrency(size.price)}
-                            </span>
-                          </button>
+                            {ing}
+                          </span>
                         ))}
                       </div>
                     </div>
-                  )}
 
-                  {/* Price & Add to Cart */}
-                  <div className="flex items-center gap-4 pt-3 border-t border-gray-100">
-                    <div className="flex-1">
-                      {product.sizes.length > 1 && (
-                        <p className="text-xs text-gray-400">{product.sizes[sizeIdx].label}</p>
-                      )}
-                      <p className="text-3xl font-bold text-brand-green-dark">
-                        {formatCurrency(currentPrice)}
+                    {/* Benefits */}
+                    <div className="space-y-2.5">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-400">
+                        Benefits
                       </p>
+                      <div className="flex flex-wrap gap-2">
+                        {product.benefits.map((b) => (
+                          <span
+                            key={b}
+                            className="px-3 py-1.5 bg-brand-gold/10 text-brand-gold text-xs font-bold rounded-xl"
+                          >
+                            {b}
+                          </span>
+                        ))}
+                      </div>
                     </div>
 
-                    {inCart ? (
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => updateQuantity(product.id, sizeIdx, -1)}
-                          className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
-                        >
-                          <Minus className="w-4 h-4" />
-                        </button>
-                        <span className="font-bold text-lg w-8 text-center text-brand-green-dark">
-                          {inCart.quantity}
-                        </span>
-                        <button
-                          onClick={() => updateQuantity(product.id, sizeIdx, 1)}
-                          className="w-10 h-10 rounded-xl bg-brand-green text-white flex items-center justify-center hover:bg-brand-green-dark transition-colors"
-                        >
-                          <Plus className="w-4 h-4" />
-                        </button>
+                    {/* Size & Quantity selector */}
+                    <div className="space-y-2.5">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-400">
+                        {product.sizes.length > 1 ? "Select Sizes & Quantities" : "Quantity"}
+                      </p>
+                      <div className="space-y-2">
+                        {product.sizes.map((size, idx) => {
+                          const qty = getCartQty(product.id, idx);
+                          const justAdded = addedProductId === `${product.id}-${idx}`;
+                          return (
+                            <div
+                              key={size.label}
+                              className={cn(
+                                "flex items-center gap-3 px-4 py-3 rounded-xl border transition-all duration-200",
+                                qty > 0
+                                  ? "bg-brand-green/5 border-brand-green/30"
+                                  : "bg-white border-gray-200"
+                              )}
+                            >
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-bold text-gray-900">
+                                  {size.label}{" "}
+                                  <span className="text-gray-400 font-normal text-xs">
+                                    ({size.ml}ml)
+                                  </span>
+                                </p>
+                                <p className="text-sm font-bold text-brand-green-dark">
+                                  {formatCurrency(size.price)}
+                                </p>
+                              </div>
+
+                              {qty > 0 ? (
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      updateQuantity(product.id, idx, -1)
+                                    }
+                                    aria-label={`Remove one ${product.name} ${size.label}`}
+                                    className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+                                  >
+                                    <Minus className="w-3.5 h-3.5" />
+                                  </button>
+                                  <span className="font-bold text-sm w-5 text-center text-brand-green-dark">
+                                    {qty}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      updateQuantity(product.id, idx, 1)
+                                    }
+                                    aria-label={`Add one more ${product.name} ${size.label}`}
+                                    className="w-8 h-8 rounded-lg bg-brand-green text-white flex items-center justify-center hover:bg-brand-green-dark transition-colors"
+                                  >
+                                    <Plus className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    addToCartForSize(product, idx)
+                                  }
+                                  disabled={!product.inStock}
+                                  className={cn(
+                                    "flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-lg transition-all duration-200",
+                                    justAdded
+                                      ? "bg-green-500 text-white scale-95"
+                                      : product.inStock
+                                        ? "bg-brand-green-dark text-white hover:bg-brand-green"
+                                        : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                  )}
+                                >
+                                  {justAdded ? (
+                                    <>
+                                      <Check className="w-3.5 h-3.5" />
+                                      Added
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Plus className="w-3.5 h-3.5" />
+                                      Add
+                                    </>
+                                  )}
+                                </button>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
-                    ) : (
-                      <button
-                        onClick={() => addToCart(product)}
-                        className={cn(
-                          "flex items-center gap-2 px-6 py-3.5 font-bold rounded-xl transition-all duration-300 shadow-lg",
-                          addedAnimation
-                            ? "bg-green-500 text-white shadow-green-500/20 scale-95"
-                            : "bg-brand-green-dark text-white shadow-brand-green/20 hover:bg-brand-green hover:scale-[1.02]"
-                        )}
-                      >
-                        {addedAnimation ? (
-                          <>
-                            <Check className="w-5 h-5" />
-                            Added!
-                          </>
-                        ) : (
-                          <>
-                            <ShoppingBag className="w-5 h-5" />
-                            Add to Cart
-                          </>
-                        )}
-                      </button>
-                    )}
-                  </div>
-                </div>
+                    </div>
+
+                    {/* Starting price */}
+                    <div className="flex items-center gap-4 pt-3 border-t border-gray-100">
+                      <div className="flex-1">
+                        <p className="text-[10px] text-gray-400">Starting from</p>
+                        <p className="text-2xl font-black text-brand-green-dark">
+                          {formatCurrency(lowestPrice)}
+                        </p>
+                      </div>
+
+                      {isAnyInCart(product.id) && (
+                        <button
+                          type="button"
+                          onClick={() => setCartOpen(true)}
+                          className="flex items-center gap-2 px-5 py-3 text-sm font-bold rounded-xl bg-brand-green-dark text-white hover:bg-brand-green transition-all shadow-lg shadow-brand-green/20"
+                        >
+                          <ShoppingBag className="w-4 h-4" />
+                          View Cart
+                        </button>
+                      )}
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
               </div>
             </div>
 
@@ -369,7 +400,8 @@ export default function ShopPage() {
               </div>
               <div ref={listRef} className="flex-1 overflow-y-auto">
                 {filtered.map((p, i) => {
-                  const itemInCart = cart.some((c) => c.product.id === p.id);
+                  const itemInCart = isAnyInCart(p.id);
+                  const pLowest = Math.min(...p.sizes.map((s) => s.price));
                   return (
                     <button
                       key={p.id}
@@ -382,7 +414,7 @@ export default function ShopPage() {
                       )}
                     >
                       <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-gray-100">
-                        <Image src={p.image} alt={p.name} width={40} height={40} className="w-full h-full object-cover" />
+                        <Image src={p.image} alt={p.name} width={40} height={40} className="w-full h-full object-contain" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p
@@ -394,12 +426,15 @@ export default function ShopPage() {
                           {p.name}
                         </p>
                         <p className="text-[11px] text-gray-400 truncate">
-                          {p.ingredients.slice(0, 3).join(" · ")}
+                          {p.sizes.length > 1
+                            ? p.sizes.map((s) => s.label).join(" · ")
+                            : p.ingredients.slice(0, 3).join(" · ")}
                         </p>
                       </div>
                       <div className="text-right shrink-0">
                         <p className="text-sm font-bold text-brand-green">
-                          {formatCurrency(p.sizes[0].price)}
+                          {p.sizes.length > 1 && <span className="text-[9px] text-gray-400 font-normal">from </span>}
+                          {formatCurrency(pLowest)}
                         </p>
                         {itemInCart && (
                           <span className="text-[9px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">
@@ -417,9 +452,11 @@ export default function ShopPage() {
       </main>
 
       {/* Floating cart button */}
-      {cartCount > 0 && (
+      {hydrated && cartCount > 0 && (
         <button
+          type="button"
           onClick={() => setCartOpen(true)}
+          aria-label={`Open cart, ${cartCount} item${cartCount === 1 ? "" : "s"}, ${formatCurrency(cartTotal)}`}
           className="fixed bottom-6 right-6 z-40 flex items-center gap-3 px-6 py-4 bg-brand-green-dark text-white font-bold rounded-2xl shadow-2xl shadow-black/20 hover:bg-brand-green hover:scale-[1.03] transition-all duration-300"
         >
           <div className="relative">
@@ -433,136 +470,155 @@ export default function ShopPage() {
       )}
 
       {/* Cart Drawer */}
-      {cartOpen && (
-        <div className="fixed inset-0 z-50">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setCartOpen(false)} />
-          <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl flex flex-col animate-slide-right">
-            <div className="flex items-center justify-between p-6 border-b border-gray-100">
-              <div>
-                <h2 className="text-lg font-bold text-gray-900">Your Cart</h2>
-                <p className="text-xs text-gray-400">{cartCount} item{cartCount > 1 ? "s" : ""}</p>
-              </div>
-              <button
-                onClick={() => setCartOpen(false)}
-                className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+      <AnimatePresence>
+        {cartOpen && (
+          <div className="fixed inset-0 z-50">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setCartOpen(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
 
-            <div className="flex-1 overflow-y-auto p-5 space-y-3">
-              {cart.map((item) => (
-                <div key={`${item.product.id}-${item.sizeIndex}`} className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
-                  <div className="w-12 h-12 bg-white rounded-xl overflow-hidden shrink-0 border border-gray-100">
-                    <Image src={item.product.image} alt={item.product.name} width={48} height={48} className="w-full h-full object-cover" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm text-gray-900 truncate">{item.product.name}</p>
-                    <p className="text-[11px] text-gray-400">
-                      {item.product.sizes[item.sizeIndex].label} · {formatCurrency(item.product.sizes[item.sizeIndex].price)} each
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <button onClick={() => updateQuantity(item.product.id, item.sizeIndex, -1)} className="w-7 h-7 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50">
-                      <Minus className="w-3 h-3" />
-                    </button>
-                    <span className="text-sm font-bold w-5 text-center">{item.quantity}</span>
-                    <button onClick={() => updateQuantity(item.product.id, item.sizeIndex, 1)} className="w-7 h-7 rounded-lg bg-brand-green text-white flex items-center justify-center hover:bg-brand-green-dark">
-                      <Plus className="w-3 h-3" />
-                    </button>
-                  </div>
+            {/* Drawer Body */}
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 220 }}
+              className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl flex flex-col"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="cart-drawer-title"
+            >
+              <div className="flex items-center justify-between p-6 border-b border-gray-100">
+                <div>
+                  <h2 id="cart-drawer-title" className="text-lg font-bold text-gray-900">Your Cart</h2>
+                  <p className="text-xs text-gray-400">{cartCount} item{cartCount > 1 ? "s" : ""}</p>
                 </div>
-              ))}
-            </div>
-
-            <div className="p-5 border-t border-gray-100 space-y-4 bg-white">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Subtotal</span>
-                <span className="text-lg font-bold text-gray-900">{formatCurrency(cartTotal)}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Delivery</span>
-                <span className="text-sm font-semibold text-gray-700">{deliveryFee === 0 ? "FREE" : formatCurrency(deliveryFee)}</span>
-              </div>
-              <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                <span className="text-sm font-bold text-gray-900">Total</span>
-                <span className="text-2xl font-bold text-brand-green-dark">{formatCurrency(orderTotal)}</span>
-              </div>
-              {cartTotal >= 100 && (
-                <p className="text-xs text-green-600 font-medium bg-green-50 px-3 py-2 rounded-lg">
-                  🚚 You qualify for free delivery!
-                </p>
-              )}
-
-              {checkoutStep === "cart" ? (
                 <button
-                  onClick={() => setCheckoutStep("details")}
-                  className="flex items-center justify-center gap-2 w-full py-4 bg-brand-green-dark text-white font-bold rounded-xl hover:bg-brand-green transition-all shadow-lg shadow-brand-green/20"
+                  type="button"
+                  onClick={() => setCartOpen(false)}
+                  aria-label="Close cart"
+                  className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
                 >
-                  Checkout
-                  <ArrowRight className="w-4 h-4" />
+                  <X className="w-4 h-4" />
                 </button>
-              ) : (
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1">Your Name *</label>
-                    <input
-                      type="text"
-                      value={customerName}
-                      onChange={(e) => setCustomerName(e.target.value)}
-                      placeholder="Ama Mensah"
-                      required
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green outline-none text-sm"
-                    />
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-5 space-y-3">
+                {hydrated && cart.map((item) => (
+                  <div key={`${item.product.id}-${item.sizeIndex}`} className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
+                    <div className="w-12 h-12 bg-white rounded-xl overflow-hidden shrink-0 border border-gray-100">
+                      <Image src={item.product.image} alt={item.product.name} width={48} height={48} className="w-full h-full object-contain p-0.5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm text-gray-900 truncate">{item.product.name}</p>
+                      <p className="text-[11px] text-gray-400">
+                        {item.product.sizes[item.sizeIndex].label} · {formatCurrency(item.product.sizes[item.sizeIndex].price)} each
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <button type="button" onClick={() => updateQuantity(item.product.id, item.sizeIndex, -1)} aria-label={`Remove one ${item.product.name}`} className="w-7 h-7 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50">
+                        <Minus className="w-3 h-3" />
+                      </button>
+                      <span className="text-sm font-bold w-5 text-center">{item.quantity}</span>
+                      <button type="button" onClick={() => updateQuantity(item.product.id, item.sizeIndex, 1)} aria-label={`Add one more ${item.product.name}`} className="w-7 h-7 rounded-lg bg-brand-green text-white flex items-center justify-center hover:bg-brand-green-dark">
+                        <Plus className="w-3 h-3" />
+                      </button>
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1">Phone Number *</label>
-                    <input
-                      type="tel"
-                      value={customerPhone}
-                      onChange={(e) => setCustomerPhone(e.target.value)}
-                      placeholder="0551234567"
-                      required
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green outline-none text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1">Delivery Address (optional)</label>
-                    <input
-                      type="text"
-                      value={customerAddress}
-                      onChange={(e) => setCustomerAddress(e.target.value)}
-                      placeholder="East Legon, Boundary Rd"
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green outline-none text-sm"
-                    />
-                  </div>
-                  <a
-                    href={customerName.trim() && customerPhone.trim() ? `https://wa.me/233551792710?text=${encodeURIComponent(whatsappOrderMessage())}` : "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => {
-                      if (!customerName.trim() || !customerPhone.trim()) {
-                        e.preventDefault();
-                        alert("Please enter your name and phone number.");
-                      }
-                    }}
-                    className="flex items-center justify-center gap-2 w-full py-4 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg shadow-green-500/20"
-                  >
-                    <MessageCircle className="w-5 h-5" />
-                    Send Order via WhatsApp
-                  </a>
-                  <button
-                    onClick={() => setCheckoutStep("cart")}
-                    className="w-full py-2 text-sm text-gray-500 hover:text-gray-700"
-                  >
-                    ← Back to cart
-                  </button>
+                ))}
+              </div>
+
+              <div className="p-5 border-t border-gray-100 space-y-4 bg-white">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-500">Subtotal</span>
+                  <span className="text-lg font-bold text-gray-900">{formatCurrency(hydrated ? cartTotal : 0)}</span>
                 </div>
-              )}
-            </div>
+                <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                  <span className="text-sm font-bold text-gray-900">Total</span>
+                  <span className="text-2xl font-bold text-brand-green-dark">{formatCurrency(hydrated ? orderTotal : 0)}</span>
+                </div>
+
+                {checkoutStep === "cart" ? (
+                  <button
+                    type="button"
+                    onClick={() => setCheckoutStep("details")}
+                    disabled={cartCount === 0}
+                    className="flex items-center justify-center gap-2 w-full py-4 bg-brand-green-dark text-white font-bold rounded-xl hover:bg-brand-green transition-all shadow-lg shadow-brand-green/20 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
+                  >
+                    Checkout
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-500 mb-1">Your Name *</label>
+                      <input
+                        type="text"
+                        value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                        placeholder="Ama Mensah"
+                        required
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green outline-none text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-500 mb-1">Phone Number *</label>
+                      <input
+                        type="tel"
+                        value={customerPhone}
+                        onChange={(e) => setCustomerPhone(e.target.value)}
+                        placeholder="0551234567"
+                        required
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green outline-none text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-500 mb-1">Delivery Address (optional)</label>
+                      <input
+                        type="text"
+                        value={customerAddress}
+                        onChange={(e) => setCustomerAddress(e.target.value)}
+                        placeholder="East Legon, Boundary Rd"
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green outline-none text-sm"
+                      />
+                    </div>
+                    <p className="text-[11px] text-gray-500 bg-gray-50 px-3 py-2.5 rounded-xl leading-relaxed">
+                      💸 After sending your order, we will reply on WhatsApp with payment details (MoMo / bank transfer). Your order is confirmed once payment is received.
+                    </p>
+                    <a
+                      href={customerName.trim() && customerPhone.trim() ? `https://wa.me/233551792710?text=${encodeURIComponent(whatsappOrderMessage())}` : "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => {
+                        if (!customerName.trim() || !customerPhone.trim()) {
+                          e.preventDefault();
+                          alert("Please enter your name and phone number.");
+                        }
+                      }}
+                      className="flex items-center justify-center gap-2 w-full py-4 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg shadow-green-500/20"
+                    >
+                      <MessageCircle className="w-5 h-5" />
+                      Place Order via WhatsApp
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => setCheckoutStep("cart")}
+                      className="w-full py-2 text-xs text-gray-500 hover:text-gray-700"
+                    >
+                      ← Back to cart
+                    </button>
+                  </div>
+                )}
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
       <WhatsAppFloat />
       <Footer />
