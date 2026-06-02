@@ -1,8 +1,10 @@
 import { Product } from "./types";
 
-const CLOUD = "dqcejwbxk";
-const img = (id: string) =>
-  `https://res.cloudinary.com/${CLOUD}/image/upload/f_auto,q_auto,w_800/jus-wellness/products/${id}`;
+// Use local placeholder images for development.
+// Replace with Cloudinary URLs when real product photos are uploaded:
+// const CLOUD = "dqcejwbxk";
+// const img = (id: string) => `https://res.cloudinary.com/${CLOUD}/image/upload/f_auto,q_auto,w_800/jus-wellness/products/${id}`;
+const img = (id: string) => `/products/${id}.svg`;
 
 const juiceSizes = [
   { label: "250ml", ml: 250, price: 15 },

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f1c40f"/>
+      <stop offset="50%" style="stop-color:#e74c3c"/>
+      <stop offset="100%" style="stop-color:#e67e22"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="30%" cy="30%" r="60%">
+      <stop offset="0%" style="stop-color:rgba(255,255,255,0.15)"/>
+      <stop offset="100%" style="stop-color:rgba(255,255,255,0)"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="800" rx="40" fill="url(#bg)"/>
+  <rect width="800" height="800" rx="40" fill="url(#glow)"/>
+  <text x="400" y="340" text-anchor="middle" font-size="120" fill="#fff">😊</text>
+  <text x="400" y="450" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="42" font-weight="700" fill="#fff">The Joy</text>
+  <text x="400" y="500" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="20" fill="rgba(255,255,255,0.6)">Jus Wellness</text>
+  <rect x="320" y="520" width="160" height="3" rx="1.5" fill="rgba(255,255,255,0.3)"/>
+</svg>
