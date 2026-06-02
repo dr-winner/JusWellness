@@ -53,6 +53,7 @@ export function logOrder(order: {
   customerName: string;
   customerPhone: string;
   customerAddress: string;
+  deliveryNote?: string;
   items: {
     name: string;
     size: string;
