@@ -12,6 +12,7 @@ interface CartContextType {
   cartTotal: number;
   deliveryFee: number;
   orderTotal: number;
+  hydrated: boolean;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -62,11 +63,13 @@ export function CartProvider({
 
   // Hydrate from localStorage on mount
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      setCart(deserializeCart(stored, products));
-    }
-    setHydrated(true);
+    queueMicrotask(() => {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        setCart(deserializeCart(stored, products));
+      }
+      setHydrated(true);
+    });
   }, [products]);
 
   // Persist to localStorage on change
@@ -130,6 +133,7 @@ export function CartProvider({
         cartTotal,
         deliveryFee,
         orderTotal,
+        hydrated,
       }}
     >
       {children}

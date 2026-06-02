@@ -43,6 +43,12 @@ body {
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+}
+
+:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--brand-gold) 70%, white);
+  outline-offset: 3px;
 }
 
 /* Premium scrollbar */
@@ -137,6 +143,21 @@ html {
 }
 .animate-spin-slow {
   animation: spin-slow 20s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
 }
 
 /* Delay utilities */

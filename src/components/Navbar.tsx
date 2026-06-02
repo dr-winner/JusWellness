@@ -7,15 +7,15 @@ import { cn } from "@/lib/utils";
 import { useCart } from "@/lib/cart-context";
 
 const navLinks = [
-  { href: "#products", label: "Menu" },
-  { href: "#about", label: "About" },
-  { href: "#testimonials", label: "Reviews" },
-  { href: "#contact", label: "Contact" },
+  { href: "/#products", label: "Menu" },
+  { href: "/#about", label: "About" },
+  { href: "/#testimonials", label: "Reviews" },
+  { href: "/#contact", label: "Contact" },
 ];
 
 export default function Navbar({ cartCount: cartCountProp }: { cartCount?: number }) {
-  const cartCtx = useCart();
-  const cartCount = cartCountProp ?? cartCtx.cartCount;
+  const { cartCount: ctxCartCount, hydrated } = useCart();
+  const cartCount = cartCountProp ?? (hydrated ? ctxCartCount : 0);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -24,6 +24,17 @@ export default function Navbar({ cartCount: cartCountProp }: { cartCount?: numbe
     window.addEventListener("scroll", handler, { passive: true });
     return () => window.removeEventListener("scroll", handler);
   }, []);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+
+    const handler = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false);
+    };
+
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [mobileOpen]);
 
   return (
     <nav
@@ -80,6 +91,7 @@ export default function Navbar({ cartCount: cartCountProp }: { cartCount?: numbe
           <div className="flex items-center gap-2">
             <Link
               href="/cart"
+              aria-label={`Cart${cartCount > 0 ? `, ${cartCount} item${cartCount === 1 ? "" : "s"}` : ""}`}
               className={cn(
                 "relative p-2.5 rounded-xl transition-all duration-300",
                 scrolled ? "hover:bg-gray-100" : "hover:bg-white/10"
@@ -109,7 +121,11 @@ export default function Navbar({ cartCount: cartCountProp }: { cartCount?: numbe
               Order Now
             </Link>
             <button
+              type="button"
               onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-navigation"
               className={cn(
                 "md:hidden p-2.5 rounded-xl transition-colors",
                 scrolled ? "hover:bg-gray-100" : "hover:bg-white/10"
@@ -127,6 +143,7 @@ export default function Navbar({ cartCount: cartCountProp }: { cartCount?: numbe
 
       {/* Mobile menu */}
       <div
+        id="mobile-navigation"
         className={cn(
           "md:hidden overflow-hidden transition-all duration-400 ease-out",
           mobileOpen ? "max-h-80" : "max-h-0"
