@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import LocationPicker, { type LocationData } from "@/components/LocationPicker";
 import { useCart, getItemPrice, getItemTotal } from "@/lib/cart-context";
 import { formatCurrency } from "@/lib/utils";
 import { logOrder } from "@/lib/sheets";
@@ -20,6 +21,10 @@ import {
   X,
   RefreshCw,
   CalendarCheck,
+  MapPin,
+  Store,
+  Truck,
+  StickyNote,
 } from "lucide-react";
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -41,7 +46,9 @@ export default function CartPage() {
 
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
-  const [customerAddress, setCustomerAddress] = useState("");
+  const [deliveryMode, setDeliveryMode] = useState<"delivery" | "pickup">("delivery");
+  const [location, setLocation] = useState<LocationData>({ address: "" });
+  const [deliveryNote, setDeliveryNote] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [orderSent, setOrderSent] = useState(false);
@@ -60,9 +67,12 @@ export default function CartPage() {
     } else if (!/^\+?233[0-9]{9}$|^0[0-9]{9}$/.test(trimmedPhone)) {
       newErrors.phone = "Enter a valid Ghana number (e.g. 0241234567)";
     }
+    if (deliveryMode === "delivery" && !location.address.trim()) {
+      newErrors.location = "Please enter your delivery location or use GPS";
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [customerName, customerPhone]);
+  }, [customerName, customerPhone, deliveryMode, location]);
 
   const buildWhatsAppMessage = useCallback((): string => {
     const oneTimeItems = cart.filter((i) => !i.subscription);
@@ -82,11 +92,22 @@ export default function CartPage() {
       ``,
       `*Customer:* ${customerName.trim()}`,
       `*Phone:* ${customerPhone.trim()}`,
-      customerAddress.trim()
-        ? `*Delivery:* ${customerAddress.trim()}`
-        : `*Pickup:* East Legon`,
-      ``,
     ];
+
+    if (deliveryMode === "delivery") {
+      lines.push(`*🚚 Delivery To:* ${location.address.trim()}`);
+      if (location.isLiveLocation && location.googleMapsUrl) {
+        lines.push(`*📍 Live Location:* ${location.googleMapsUrl}`);
+      }
+    } else {
+      lines.push(`*🏪 Pickup:* East Legon`);
+    }
+
+    if (deliveryNote.trim()) {
+      lines.push(`*📝 Note:* ${deliveryNote.trim()}`);
+    }
+
+    lines.push(``);
 
     if (oneTimeItems.length > 0) {
       lines.push(`*One-Time Items:*`);
@@ -119,7 +140,9 @@ export default function CartPage() {
     cart,
     customerName,
     customerPhone,
-    customerAddress,
+    deliveryMode,
+    location,
+    deliveryNote,
     orderTotal,
     subscriptionSavings,
   ]);
@@ -138,10 +161,14 @@ export default function CartPage() {
     setTimeout(() => clearCart(), 500);
 
     // Fire-and-forget: log order to Google Sheet
+    const locationStr = deliveryMode === "delivery"
+      ? `${location.address.trim()}${location.googleMapsUrl ? ` (${location.googleMapsUrl})` : ""}`
+      : "Pickup — East Legon";
     logOrder({
       customerName: customerName.trim(),
       customerPhone: customerPhone.trim(),
-      customerAddress: customerAddress.trim() || "Pickup — East Legon",
+      customerAddress: locationStr,
+      deliveryNote: deliveryNote.trim(),
       items: cart.map((item) => ({
         name: item.product.name,
         size: item.product.sizes[item.sizeIndex].label,
@@ -480,7 +507,7 @@ export default function CartPage() {
             </div>
 
             {/* Customer Details */}
-            <div className="border-t border-gray-100 pt-5 space-y-4">
+            <div className="border-t border-gray-100 pt-5 space-y-5">
               <h3 className="font-bold text-sm text-gray-900 uppercase tracking-wider">
                 Your Details
               </h3>
@@ -549,26 +576,136 @@ export default function CartPage() {
                 )}
               </div>
 
+              {/* Delivery / Pickup toggle */}
               <div>
-                <label
-                  htmlFor="cart-address"
-                  className="block text-xs font-semibold text-gray-500 mb-1"
+                <p className="block text-xs font-semibold text-gray-500 mb-2">
+                  How do you want to get your juice? *
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setDeliveryMode("delivery")}
+                    className={`flex items-center gap-2.5 p-4 rounded-xl border-2 transition-all ${
+                      deliveryMode === "delivery"
+                        ? "border-brand-green bg-brand-green/5"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
+                      deliveryMode === "delivery" ? "bg-brand-green/10" : "bg-gray-100"
+                    }`}>
+                      <Truck className={`w-4.5 h-4.5 ${
+                        deliveryMode === "delivery" ? "text-brand-green" : "text-gray-400"
+                      }`} />
+                    </div>
+                    <div className="text-left">
+                      <p className={`text-sm font-bold ${
+                        deliveryMode === "delivery" ? "text-brand-green-dark" : "text-gray-700"
+                      }`}>
+                        Delivery
+                      </p>
+                      <p className="text-[10px] text-gray-400">We come to you</p>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDeliveryMode("pickup");
+                      if (errors.location) setErrors((p) => ({ ...p, location: "" }));
+                    }}
+                    className={`flex items-center gap-2.5 p-4 rounded-xl border-2 transition-all ${
+                      deliveryMode === "pickup"
+                        ? "border-brand-green bg-brand-green/5"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
+                      deliveryMode === "pickup" ? "bg-brand-green/10" : "bg-gray-100"
+                    }`}>
+                      <Store className={`w-4.5 h-4.5 ${
+                        deliveryMode === "pickup" ? "text-brand-green" : "text-gray-400"
+                      }`} />
+                    </div>
+                    <div className="text-left">
+                      <p className={`text-sm font-bold ${
+                        deliveryMode === "pickup" ? "text-brand-green-dark" : "text-gray-700"
+                      }`}>
+                        Pickup
+                      </p>
+                      <p className="text-[10px] text-gray-400">East Legon</p>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              {/* Location picker or Pickup info */}
+              <AnimatePresence mode="wait">
+                {deliveryMode === "delivery" ? (
+                  <motion.div
+                    key="delivery"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <label className="block text-xs font-semibold text-gray-500 mb-1.5">
+                      Delivery Location *
+                    </label>
+                    <LocationPicker
+                      value={location}
+                      onChange={setLocation}
+                      error={errors.location}
+                      onClearError={() => setErrors((p) => ({ ...p, location: "" }))}
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="pickup"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex items-center gap-3 p-4 bg-brand-cream rounded-xl"
+                  >
+                    <Store className="w-5 h-5 text-brand-green shrink-0" />
+                    <div>
+                      <p className="text-sm font-bold text-gray-900">Pickup Point</p>
+                      <p className="text-xs text-gray-500">
+                        East Legon, Accra — exact address sent on WhatsApp
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Delivery note */}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setDeliveryNote((prev) => prev === "" ? " " : prev)}
+                  className="flex items-center gap-1.5 text-[11px] font-semibold text-gray-400 hover:text-gray-600 transition-colors mb-1.5"
                 >
-                  Delivery Address{" "}
-                  <span className="text-gray-400 font-normal">
-                    (optional — leave blank for pickup)
-                  </span>
-                </label>
-                <input
-                  id="cart-address"
-                  type="text"
-                  value={customerAddress}
-                  onChange={(e) => setCustomerAddress(e.target.value)}
-                  placeholder="East Legon, Boundary Rd"
-                  maxLength={200}
-                  autoComplete="street-address"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green outline-none text-sm transition-all"
-                />
+                  <StickyNote className="w-3 h-3" />
+                  Add a note to your order
+                </button>
+                <AnimatePresence>
+                  {deliveryNote !== "" && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                    >
+                      <textarea
+                        value={deliveryNote.trim() ? deliveryNote : ""}
+                        onChange={(e) => setDeliveryNote(e.target.value)}
+                        placeholder="E.g. Leave at the gate, call when arriving, specific landmark..."
+                        maxLength={300}
+                        rows={2}
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green outline-none text-sm resize-none transition-all"
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               <div className="flex items-start gap-3 p-4 bg-brand-cream rounded-xl">
@@ -680,7 +817,7 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-4 mb-6 space-y-1 text-sm">
+              <div className="bg-gray-50 rounded-xl p-4 mb-6 space-y-1.5 text-sm">
                 <p>
                   <span className="text-gray-500">Name:</span>{" "}
                   <strong>{customerName.trim()}</strong>
@@ -689,15 +826,29 @@ export default function CartPage() {
                   <span className="text-gray-500">Phone:</span>{" "}
                   <strong>{customerPhone.trim()}</strong>
                 </p>
-                {customerAddress.trim() ? (
-                  <p>
-                    <span className="text-gray-500">Delivery:</span>{" "}
-                    <strong>{customerAddress.trim()}</strong>
-                  </p>
+                {deliveryMode === "delivery" ? (
+                  <>
+                    <p className="flex items-start gap-1">
+                      <span className="text-gray-500 shrink-0">Delivery:</span>{" "}
+                      <strong className="break-words">{location.address.trim()}</strong>
+                    </p>
+                    {location.isLiveLocation && (
+                      <p className="flex items-center gap-1 text-xs text-green-600">
+                        <MapPin className="w-3 h-3" />
+                        Live location attached
+                      </p>
+                    )}
+                  </>
                 ) : (
                   <p>
                     <span className="text-gray-500">Pickup:</span>{" "}
                     <strong>East Legon</strong>
+                  </p>
+                )}
+                {deliveryNote.trim() && (
+                  <p>
+                    <span className="text-gray-500">Note:</span>{" "}
+                    <em>{deliveryNote.trim()}</em>
                   </p>
                 )}
               </div>
