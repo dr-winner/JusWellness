@@ -42,7 +42,6 @@ export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [cartOpen, setCartOpen] = useState(false);
-  const [selectedSizes, setSelectedSizes] = useState<Record<string, number>>({});
   const [checkoutStep, setCheckoutStep] = useState<"cart" | "details">("cart");
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -70,17 +69,23 @@ export default function ShopPage() {
     return () => window.removeEventListener("keydown", handler);
   }, [cartOpen]);
 
-  const getSelectedSize = (productId: string) => selectedSizes[productId] ?? 0;
-
-  const setSize = (productId: string, sizeIndex: number) => {
-    setSelectedSizes((prev) => ({ ...prev, [productId]: sizeIndex }));
-  };
-
-  const addToCart = (product: Product) => {
-    const sizeIndex = getSelectedSize(product.id);
-    setAddedProductId(product.id);
+  const addToCartForSize = (product: Product, sizeIndex: number) => {
+    setAddedProductId(`${product.id}-${sizeIndex}`);
     setTimeout(() => setAddedProductId(null), 1200);
     ctxAddToCart(product, sizeIndex);
+  };
+
+  const getCartQty = (productId: string, sizeIndex: number): number => {
+    if (!hydrated) return 0;
+    const item = cart.find(
+      (c) => c.product.id === productId && c.sizeIndex === sizeIndex
+    );
+    return item?.quantity ?? 0;
+  };
+
+  const isAnyInCart = (productId: string): boolean => {
+    if (!hydrated) return false;
+    return cart.some((c) => c.product.id === productId);
   };
 
   const whatsappOrderMessage = () => {
@@ -108,12 +113,7 @@ export default function ShopPage() {
     return lines.join("\n");
   };
 
-  const sizeIdx = getSelectedSize(product.id);
-  const currentPrice = product.sizes[sizeIdx].price;
-  const addedAnimation = addedProductId === product.id;
-  const inCart = cart.find(
-    (item) => item.product.id === product.id && item.sizeIndex === sizeIdx
-  );
+  const lowestPrice = Math.min(...product.sizes.map((s) => s.price));
 
   const goNext = () => setSelectedIndex((i) => Math.min(i + 1, filtered.length - 1));
   const goPrev = () => setSelectedIndex((i) => Math.max(i - 1, 0));
@@ -271,95 +271,115 @@ export default function ShopPage() {
                       </div>
                     </div>
 
-                    {/* Size selector */}
-                    {product.sizes.length > 1 && (
-                      <div className="space-y-2.5">
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-400">
-                          Size
-                        </p>
-                        <div className="flex gap-2">
-                          {product.sizes.map((size, idx) => (
-                            <button
-                              type="button"
+                    {/* Size & Quantity selector */}
+                    <div className="space-y-2.5">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-400">
+                        {product.sizes.length > 1 ? "Select Sizes & Quantities" : "Quantity"}
+                      </p>
+                      <div className="space-y-2">
+                        {product.sizes.map((size, idx) => {
+                          const qty = getCartQty(product.id, idx);
+                          const justAdded = addedProductId === `${product.id}-${idx}`;
+                          return (
+                            <div
                               key={size.label}
-                              onClick={() => setSize(product.id, idx)}
-                              aria-pressed={sizeIdx === idx}
                               className={cn(
-                                "px-4 py-2 text-xs font-bold rounded-xl border transition-all duration-200",
-                                sizeIdx === idx
-                                  ? "bg-brand-green-dark text-white border-brand-green-dark shadow-md"
-                                  : "bg-white text-gray-600 border-gray-200 hover:border-brand-green/40"
+                                "flex items-center gap-3 px-4 py-3 rounded-xl border transition-all duration-200",
+                                qty > 0
+                                  ? "bg-brand-green/5 border-brand-green/30"
+                                  : "bg-white border-gray-200"
                               )}
                             >
-                              {size.label}
-                              <span className="block text-[9px] font-normal mt-0.5 opacity-70">
-                                {formatCurrency(size.price)}
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-bold text-gray-900">
+                                  {size.label}{" "}
+                                  <span className="text-gray-400 font-normal text-xs">
+                                    ({size.ml}ml)
+                                  </span>
+                                </p>
+                                <p className="text-sm font-bold text-brand-green-dark">
+                                  {formatCurrency(size.price)}
+                                </p>
+                              </div>
 
-                    {/* Price & Add to Cart */}
+                              {qty > 0 ? (
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      updateQuantity(product.id, idx, -1)
+                                    }
+                                    aria-label={`Remove one ${product.name} ${size.label}`}
+                                    className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+                                  >
+                                    <Minus className="w-3.5 h-3.5" />
+                                  </button>
+                                  <span className="font-bold text-sm w-5 text-center text-brand-green-dark">
+                                    {qty}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      updateQuantity(product.id, idx, 1)
+                                    }
+                                    aria-label={`Add one more ${product.name} ${size.label}`}
+                                    className="w-8 h-8 rounded-lg bg-brand-green text-white flex items-center justify-center hover:bg-brand-green-dark transition-colors"
+                                  >
+                                    <Plus className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    addToCartForSize(product, idx)
+                                  }
+                                  disabled={!product.inStock}
+                                  className={cn(
+                                    "flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-lg transition-all duration-200",
+                                    justAdded
+                                      ? "bg-green-500 text-white scale-95"
+                                      : product.inStock
+                                        ? "bg-brand-green-dark text-white hover:bg-brand-green"
+                                        : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                  )}
+                                >
+                                  {justAdded ? (
+                                    <>
+                                      <Check className="w-3.5 h-3.5" />
+                                      Added
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Plus className="w-3.5 h-3.5" />
+                                      Add
+                                    </>
+                                  )}
+                                </button>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Starting price */}
                     <div className="flex items-center gap-4 pt-3 border-t border-gray-100">
                       <div className="flex-1">
-                        {product.sizes.length > 1 && (
-                          <p className="text-[10px] text-gray-400">{product.sizes[sizeIdx].label}</p>
-                        )}
+                        <p className="text-[10px] text-gray-400">Starting from</p>
                         <p className="text-2xl font-black text-brand-green-dark">
-                          {formatCurrency(currentPrice)}
+                          {formatCurrency(lowestPrice)}
                         </p>
                       </div>
 
-                      {hydrated && inCart ? (
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => updateQuantity(product.id, sizeIdx, -1)}
-                            aria-label={`Remove one ${product.name} from cart`}
-                            className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
-                          >
-                            <Minus className="w-4 h-4" />
-                          </button>
-                          <span className="font-bold text-base w-6 text-center text-brand-green-dark">
-                            {inCart.quantity}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => updateQuantity(product.id, sizeIdx, 1)}
-                            aria-label={`Add one more ${product.name}`}
-                            className="w-10 h-10 rounded-xl bg-brand-green text-white flex items-center justify-center hover:bg-brand-green-dark transition-colors"
-                          >
-                            <Plus className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ) : (
+                      {isAnyInCart(product.id) && (
                         <button
                           type="button"
-                          onClick={() => addToCart(product)}
-                          disabled={!product.inStock}
-                          aria-label={`Add ${product.name} ${product.sizes[sizeIdx].label} to cart`}
-                          className={cn(
-                            "flex items-center gap-2 px-6 py-3.5 text-sm font-bold rounded-xl transition-all duration-300 shadow-lg",
-                            addedAnimation
-                              ? "bg-green-500 text-white shadow-green-500/20 scale-95"
-                              : product.inStock
-                                ? "bg-brand-green-dark text-white shadow-brand-green/20 hover:bg-brand-green hover:scale-[1.02]"
-                                : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                          )}
+                          onClick={() => setCartOpen(true)}
+                          className="flex items-center gap-2 px-5 py-3 text-sm font-bold rounded-xl bg-brand-green-dark text-white hover:bg-brand-green transition-all shadow-lg shadow-brand-green/20"
                         >
-                          {addedAnimation ? (
-                            <>
-                              <Check className="w-4 h-4" />
-                              Added!
-                            </>
-                          ) : (
-                            <>
-                              <ShoppingBag className="w-4 h-4" />
-                              Add to Cart
-                            </>
-                          )}
+                          <ShoppingBag className="w-4 h-4" />
+                          View Cart
                         </button>
                       )}
                     </div>
@@ -380,8 +400,8 @@ export default function ShopPage() {
               </div>
               <div ref={listRef} className="flex-1 overflow-y-auto">
                 {filtered.map((p, i) => {
-                  const itemInCart = hydrated && cart.some((c) => c.product.id === p.id);
-                  const pSizeIdx = getSelectedSize(p.id);
+                  const itemInCart = isAnyInCart(p.id);
+                  const pLowest = Math.min(...p.sizes.map((s) => s.price));
                   return (
                     <button
                       key={p.id}
@@ -413,7 +433,8 @@ export default function ShopPage() {
                       </div>
                       <div className="text-right shrink-0">
                         <p className="text-sm font-bold text-brand-green">
-                          {formatCurrency(p.sizes[pSizeIdx].price)}
+                          {p.sizes.length > 1 && <span className="text-[9px] text-gray-400 font-normal">from </span>}
+                          {formatCurrency(pLowest)}
                         </p>
                         {itemInCart && (
                           <span className="text-[9px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">
