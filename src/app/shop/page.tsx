@@ -38,7 +38,7 @@ const bgAccents: Record<string, string> = {
 };
 
 export default function ShopPage() {
-  const { cart, addToCart: ctxAddToCart, updateQuantity, cartCount: ctxCartCount, cartTotal, deliveryFee, orderTotal, hydrated } = useCart();
+  const { cart, addToCart: ctxAddToCart, updateQuantity, cartCount: ctxCartCount, cartTotal, orderTotal, hydrated } = useCart();
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [cartOpen, setCartOpen] = useState(false);
@@ -100,8 +100,6 @@ export default function ShopPage() {
       `*Items:*`,
       items,
       ``,
-      `*Subtotal:* ${formatCurrency(cartTotal)}`,
-      `*Delivery:* ${deliveryFee === 0 ? "FREE 🎉" : formatCurrency(deliveryFee)}`,
       `━━━━━━━━━━━━━━`,
       `*TOTAL: ${formatCurrency(orderTotal)}*`,
       ``,
@@ -519,19 +517,10 @@ export default function ShopPage() {
                   <span className="text-sm text-gray-500">Subtotal</span>
                   <span className="text-lg font-bold text-gray-900">{formatCurrency(hydrated ? cartTotal : 0)}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">Delivery</span>
-                  <span className="text-sm font-semibold text-gray-700">{hydrated && deliveryFee === 0 ? "FREE" : formatCurrency(hydrated ? deliveryFee : 0)}</span>
-                </div>
                 <div className="flex items-center justify-between pt-2 border-t border-gray-100">
                   <span className="text-sm font-bold text-gray-900">Total</span>
                   <span className="text-2xl font-bold text-brand-green-dark">{formatCurrency(hydrated ? orderTotal : 0)}</span>
                 </div>
-                {hydrated && cartTotal >= 100 && (
-                  <p className="text-xs text-green-600 font-medium bg-green-50 px-3 py-2 rounded-lg">
-                    🚚 You qualify for free delivery!
-                  </p>
-                )}
 
                 {checkoutStep === "cart" ? (
                   <button

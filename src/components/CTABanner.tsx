@@ -48,7 +48,7 @@ export default function CTABanner() {
         </div>
 
         <p className="text-sm text-white/40">
-          🚚 Free delivery on orders above GHS 100 · 📍 Delivering across Accra
+          🧃 Subscribe & save 5% on weekly or monthly deliveries · 📍 Delivering across Accra
         </p>
       </div>
     </section>

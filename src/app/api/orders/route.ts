@@ -57,8 +57,7 @@ export async function POST(request: NextRequest) {
       (sum, item) => sum + item.unit_price * item.quantity,
       0
     );
-    const deliveryFee = subtotal >= 100 ? 0 : 10;
-    const total = subtotal + deliveryFee;
+    const total = subtotal;
 
     // Sanity check: reject unreasonable totals
     if (total > 100_000 || total <= 0) {
@@ -123,7 +122,7 @@ export async function POST(request: NextRequest) {
         channel: orderData.channel,
         status: "pending",
         subtotal,
-        delivery_fee: deliveryFee,
+        delivery_fee: 0,
         total,
         payment_status: "unpaid",
         notes: orderData.notes || null,
