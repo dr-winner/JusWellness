@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useCart, getItemPrice, getItemTotal } from "@/lib/cart-context";
 import { formatCurrency } from "@/lib/utils";
+import { logOrder } from "@/lib/sheets";
 import {
   ShoppingBag,
   Plus,
@@ -135,6 +136,24 @@ export default function CartPage() {
     setShowConfirmation(false);
     setOrderSent(true);
     setTimeout(() => clearCart(), 500);
+
+    // Fire-and-forget: log order to Google Sheet
+    logOrder({
+      customerName: customerName.trim(),
+      customerPhone: customerPhone.trim(),
+      customerAddress: customerAddress.trim() || "Pickup — East Legon",
+      items: cart.map((item) => ({
+        name: item.product.name,
+        size: item.product.sizes[item.sizeIndex].label,
+        quantity: item.quantity,
+        unitPrice: getItemPrice(item),
+        lineTotal: getItemTotal(item),
+        subscription: item.subscription,
+      })),
+      subtotal: cartTotal,
+      subscriptionSavings,
+      total: orderTotal,
+    });
   };
 
   // ============================================================

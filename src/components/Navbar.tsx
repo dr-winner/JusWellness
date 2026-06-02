@@ -7,9 +7,10 @@ import { cn } from "@/lib/utils";
 import { useCart } from "@/lib/cart-context";
 
 const navLinks = [
-  { href: "/#products", label: "Menu" },
+  { href: "/shop", label: "Menu" },
+  { href: "/wholesale", label: "Wholesale" },
+  { href: "/reviews", label: "Reviews" },
   { href: "/#about", label: "About" },
-  { href: "/#testimonials", label: "Reviews" },
   { href: "/#contact", label: "Contact" },
 ];
 

@@ -74,7 +74,7 @@ export default function OGImage() {
               marginTop: "16px",
             }}
           >
-            {["🧃 22 Flavours", "🚚 Same-Day Delivery", "💚 No Additives"].map(
+            {["🧃 22 Flavours", "🏢 Wholesale Available", "💚 No Additives"].map(
               (item) => (
                 <div
                   key={item}
